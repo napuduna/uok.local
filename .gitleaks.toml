@@ -1,0 +1,12 @@
+title = "Warehouse system Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Ignore the historical SESSION_SECRET documentation placeholder"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "line"
+regexes = ['''SESSION_SECRET=replace-with-at-least-32-characters''']
+paths = ['''^\.env\.example$''']

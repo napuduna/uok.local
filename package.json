@@ -15,7 +15,7 @@
     "typecheck": "corepack pnpm -r --if-present typecheck",
     "test": "node scripts/run-pnpm-test.mjs -r --if-present test",
     "test:integration": "node scripts/run-pnpm-test.mjs --filter @warehouse/api test:integration",
-    "test:e2e": "node scripts/run-pnpm-test.mjs --filter @warehouse/web test:e2e",
+    "test:e2e": "node scripts/run-e2e.mjs",
     "test:smoke": "node scripts/run-pnpm-test.mjs exec vitest run tests/smoke",
     "prisma:generate": "corepack pnpm --filter @warehouse/database prisma:generate",
     "prisma:migrate:deploy": "corepack pnpm --filter @warehouse/database prisma:migrate:deploy",

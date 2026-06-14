@@ -17,6 +17,8 @@
     "prisma:migrate:deploy": "prisma migrate deploy --config prisma.config.ts",
     "prisma:migrate:verify": "tsx scripts/verify-migrations.ts",
     "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:e2e:setup": "tsx scripts/e2e-fixture.ts setup",
+    "prisma:e2e:cleanup": "tsx scripts/e2e-fixture.ts cleanup",
     "test": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit"
   },

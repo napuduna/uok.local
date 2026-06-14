@@ -24,6 +24,7 @@ jobs:
           node-version: 24
       - run: corepack enable
       - run: corepack pnpm install --frozen-lockfile
+      - run: corepack pnpm prisma:generate
       - run: docker compose config --quiet
       - run: corepack pnpm lint
       - run: corepack pnpm typecheck
@@ -62,6 +63,7 @@ jobs:
           node-version: 24
       - run: corepack enable
       - run: corepack pnpm install --frozen-lockfile
+      - run: corepack pnpm prisma:generate
       - run: corepack pnpm prisma:migrate:verify
       - run: corepack pnpm prisma:migrate:deploy
       - run: corepack pnpm prisma:seed
@@ -70,6 +72,24 @@ jobs:
       - run: corepack pnpm test:integration
         env:
           DEV_ADMIN_PASSWORD: ChangeMe123!
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - run: corepack pnpm prisma:generate
+      - run: docker compose up -d --build
+      - run: docker compose exec -T api pnpm prisma:seed
+        env:
+          DEV_ADMIN_PASSWORD: ChangeMe123!
+      - run: docker compose run --rm --no-deps --build e2e
+      - if: always()
+        run: docker compose logs --no-color proxy web api worker
 
   security:
     runs-on: ubuntu-latest

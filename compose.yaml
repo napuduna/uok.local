@@ -61,7 +61,7 @@ services:
       redis:
         condition: service_healthy
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       API_PORT: 4000
       DATABASE_URL: postgresql://${POSTGRES_USER:-warehouse}:${POSTGRES_PASSWORD:-warehouse}@postgres:5432/${POSTGRES_DB:-warehouse}?schema=public
       REDIS_URL: redis://redis:6379
@@ -91,7 +91,7 @@ services:
       redis:
         condition: service_healthy
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       WORKER_PORT: 4001
       DATABASE_URL: postgresql://${POSTGRES_USER:-warehouse}:${POSTGRES_PASSWORD:-warehouse}@postgres:5432/${POSTGRES_DB:-warehouse}?schema=public
       REDIS_URL: redis://redis:6379
@@ -152,6 +152,22 @@ services:
       interval: 10s
       timeout: 5s
       retries: 12
+
+  e2e:
+    profiles: ["test"]
+    build:
+      context: .
+      dockerfile: infra/docker/node.Dockerfile
+      target: e2e
+    depends_on:
+      proxy:
+        condition: service_healthy
+    environment:
+      CI: "true"
+      PLAYWRIGHT_BASE_URL: http://proxy
+      DATABASE_URL: postgresql://${POSTGRES_USER:-warehouse}:${POSTGRES_PASSWORD:-warehouse}@postgres:5432/${POSTGRES_DB:-warehouse}?schema=public
+      E2E_USER_PASSWORD: ${DEV_ADMIN_PASSWORD:-ChangeMe123!}
+    restart: "no"
 
 volumes:
   caddy_config:

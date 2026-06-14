@@ -15,9 +15,11 @@
     "app/**/*.tsx",
     "components/**/*.ts",
     "components/**/*.tsx",
+    "e2e/**/*.ts",
     "lib/**/*.ts",
     "lib/**/*.tsx",
     "next.config.ts",
+    "playwright.config.ts",
     "test/**/*.ts",
     "vitest.config.ts"
   ],

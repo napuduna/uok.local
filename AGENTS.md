@@ -160,8 +160,7 @@ docker compose exec api pnpm prisma:seed
 docker compose exec api pnpm lint
 docker compose exec api pnpm test
 docker compose exec api pnpm test:integration
-docker compose exec web pnpm test
-docker compose exec web pnpm test:e2e
+docker compose run --rm --no-deps --build e2e
 docker compose run --rm api pnpm test:smoke
 docker compose down
 ```
@@ -231,9 +230,7 @@ docker compose run --rm api pnpm lint
 docker compose run --rm api pnpm typecheck
 docker compose run --rm api pnpm test
 docker compose run --rm api pnpm test:integration
-docker compose run --rm web pnpm lint
-docker compose run --rm web pnpm typecheck
-docker compose run --rm web pnpm test
+docker compose run --rm --no-deps --build e2e
 docker compose run --rm api pnpm test:smoke
 ```
 
