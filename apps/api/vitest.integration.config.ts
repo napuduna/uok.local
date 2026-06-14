@@ -1,0 +1,11 @@
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    include: ["test/**/*.integration.test.ts"],
+    passWithNoTests: false,
+    env: {
+      RUN_INTEGRATION_TESTS: "true"
+    }
+  }
+});

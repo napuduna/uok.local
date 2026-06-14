@@ -1,0 +1,36 @@
+{
+  "name": "@warehouse/database",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "prisma generate --config prisma.config.ts && tsc -p tsconfig.build.json",
+    "prisma:generate": "prisma generate --config prisma.config.ts",
+    "prisma:migrate:deploy": "prisma migrate deploy --config prisma.config.ts",
+    "prisma:migrate:verify": "tsx scripts/verify-migrations.ts",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "latest",
+    "@prisma/client": "latest",
+    "bcrypt": "latest",
+    "pg": "latest"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "latest",
+    "@types/pg": "latest",
+    "dotenv": "latest",
+    "prisma": "latest",
+    "tsx": "latest"
+  }
+}

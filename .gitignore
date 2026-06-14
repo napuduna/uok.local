@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.next/
+coverage/
+dist/
+node_modules/
+.pnpm-store/
+playwright-report/
+test-results/
+*.tsbuildinfo
+packages/database/src/generated/
+backups/
+.superpowers/

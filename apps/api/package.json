@@ -1,0 +1,35 @@
+{
+  "name": "@warehouse/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "nest build",
+    "dev": "nest start --watch",
+    "lint": "eslint src test",
+    "start": "node dist/main.js",
+    "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "latest",
+    "@nestjs/core": "latest",
+    "@nestjs/platform-express": "latest",
+    "@warehouse/config": "workspace:*",
+    "@warehouse/contracts": "workspace:*",
+    "@warehouse/database": "workspace:*",
+    "bcrypt": "latest",
+    "ioredis": "latest",
+    "reflect-metadata": "latest",
+    "rxjs": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "latest",
+    "@nestjs/testing": "latest",
+    "@types/bcrypt": "latest",
+    "@types/express": "latest",
+    "@types/supertest": "latest",
+    "supertest": "latest"
+  }
+}

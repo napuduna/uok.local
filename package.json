@@ -1,0 +1,36 @@
+{
+  "name": "uok-warehouse-system",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.6.0",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "corepack pnpm --filter @warehouse/config --filter @warehouse/contracts --filter @warehouse/ui --filter @warehouse/database run build && corepack pnpm --filter @warehouse/api --filter @warehouse/worker --filter @warehouse/web run build",
+    "dev": "corepack pnpm --parallel --filter @warehouse/web --filter @warehouse/api --filter @warehouse/worker dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "corepack pnpm -r --if-present typecheck",
+    "test": "node scripts/run-pnpm-test.mjs -r --if-present test",
+    "test:integration": "node scripts/run-pnpm-test.mjs --filter @warehouse/api test:integration",
+    "test:e2e": "node scripts/run-pnpm-test.mjs --filter @warehouse/web test:e2e",
+    "test:smoke": "node scripts/run-pnpm-test.mjs exec vitest run tests/smoke",
+    "prisma:generate": "corepack pnpm --filter @warehouse/database prisma:generate",
+    "prisma:migrate:deploy": "corepack pnpm --filter @warehouse/database prisma:migrate:deploy",
+    "prisma:migrate:verify": "corepack pnpm --filter @warehouse/database prisma:migrate:verify",
+    "prisma:seed": "corepack pnpm --filter @warehouse/database prisma:seed"
+  },
+  "devDependencies": {
+    "@eslint/js": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "prettier": "latest",
+    "typescript": "5.9.3",
+    "typescript-eslint": "latest",
+    "vitest": "latest"
+  }
+}

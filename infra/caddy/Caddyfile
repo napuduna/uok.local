@@ -1,0 +1,19 @@
+{$SITE_ADDRESS::80} {
+	encode zstd gzip
+	log {
+		output stdout
+		format json
+	}
+
+	handle /api/* {
+		reverse_proxy api:4000
+	}
+
+	handle /internal/* {
+		reverse_proxy worker:4001
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}

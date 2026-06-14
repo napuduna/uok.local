@@ -1,0 +1,15 @@
+packages:
+  - apps/*
+  - packages/*
+
+overrides:
+  "@hono/node-server": ">=1.19.13"
+  postcss: ">=8.5.10"
+
+allowBuilds:
+  "@prisma/client": true
+  "@prisma/engines": true
+  bcrypt: true
+  esbuild: true
+  prisma: true
+  sharp: true
