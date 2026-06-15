@@ -6,7 +6,20 @@ export type DatabaseClient = PrismaClient;
 export type TransactionClient = Prisma.TransactionClient;
 
 export function createDatabaseAdapter(connectionString: string) {
-  return new PrismaPg({ connectionString });
+  const databaseUrl = new URL(connectionString);
+  const schema = databaseUrl.searchParams.get("schema") ?? undefined;
+  databaseUrl.searchParams.delete("schema");
+  if (schema && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(schema)) {
+    throw new Error("DATABASE_URL schema contains unsupported characters");
+  }
+
+  return new PrismaPg(
+    {
+      connectionString: databaseUrl.toString(),
+      ...(schema ? { options: `-c search_path=${schema}` } : {})
+    },
+    schema ? { schema } : undefined
+  );
 }
 
 export function createDatabaseClient(connectionString: string): DatabaseClient {

@@ -221,11 +221,11 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.1: Products And Master Data
 
-- [ ] Implement Product, Category and Unit schema with unique product code
-- [ ] Add product list, search, filters, pagination, create, edit and archive endpoints
-- [ ] Add Thai table-first UI and form drawer
-- [ ] Add per-product low-stock threshold defaulting to 50
-- [ ] Prevent archive when an active workflow requires the product
+- [x] Implement Product, Category and Unit schema with unique product code
+- [x] Add product list, search, filters, pagination, create, edit and archive endpoints
+- [x] Add Thai table-first UI and form drawer
+- [x] Add per-product low-stock threshold defaulting to 50
+- [x] Prevent archive when an active workflow requires the product
 
 **Acceptance**
 
@@ -235,11 +235,11 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.2: LOT And Inventory Ledger
 
-- [ ] Implement Lot and append-only InventoryMovement schema
-- [ ] Enforce unique lot number within product and warehouse
-- [ ] Add product stock summary and lot detail endpoints
-- [ ] Add lot list showing received, sold, adjusted and available quantities
-- [ ] Add reconciliation query comparing lot availability with movement totals
+- [x] Implement Lot and append-only InventoryMovement schema
+- [x] Enforce unique lot number within product and warehouse
+- [x] Add product stock summary and lot detail endpoints
+- [x] Add lot list showing received, sold, adjusted and available quantities
+- [x] Add reconciliation query comparing lot availability with movement totals
 
 **Acceptance**
 
@@ -249,12 +249,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.3: Stock In
 
-- [ ] Implement StockIn aggregate with one or more items
-- [ ] Validate product, lot number, received date, expiry date, integer quantity and positive unit cost
-- [ ] Create lot and `STOCK_IN` movement atomically
-- [ ] Add idempotency handling
-- [ ] Add stock-in page with review confirmation and receipt detail
-- [ ] Audit creator, request ID and business reference
+- [x] Implement StockIn aggregate with one or more items
+- [x] Validate product, lot number, received date, expiry date, integer quantity and positive unit cost
+- [x] Create lot and `STOCK_IN` movement atomically
+- [x] Add idempotency handling
+- [x] Add stock-in page with review confirmation and receipt detail
+- [x] Audit creator, request ID and business reference
 
 **Acceptance**
 
@@ -264,12 +264,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.4: Inventory Adjustment
 
-- [ ] Implement increase/decrease adjustment with required reason
-- [ ] Require explicit lot selection
-- [ ] Lock lot and validate available quantity for decrease
-- [ ] Create adjustment and movement atomically
-- [ ] Add Warehouse/Admin UI with confirmation
-- [ ] Audit actor, reason and before/after quantity
+- [x] Implement increase/decrease adjustment with required reason
+- [x] Require explicit lot selection
+- [x] Lock lot and validate available quantity for decrease
+- [x] Create adjustment and movement atomically
+- [x] Add Warehouse/Admin UI with confirmation
+- [x] Audit actor, reason and before/after quantity
 
 **Acceptance**
 
@@ -279,10 +279,10 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.5: Low-Stock And Expiry Alerts
 
-- [ ] Implement low-stock query from aggregate available quantity and product threshold
-- [ ] Implement expired and expiring-soon lot queries
-- [ ] Add alert count and list to Dashboard shell
-- [ ] Add deterministic filters and pagination
+- [x] Implement low-stock query from aggregate available quantity and product threshold
+- [x] Implement expired and expiring-soon lot queries
+- [x] Add alert count and list to Dashboard shell
+- [x] Add deterministic filters and pagination
 
 **Acceptance**
 

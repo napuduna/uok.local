@@ -12,7 +12,13 @@ COPY packages/config/package.json packages/config/package.json
 COPY packages/contracts/package.json packages/contracts/package.json
 COPY packages/database/package.json packages/database/package.json
 COPY packages/ui/package.json packages/ui/package.json
-RUN corepack pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=uok-pnpm-store,target=/pnpm/store \
+    corepack pnpm config set store-dir /pnpm/store && \
+    corepack pnpm install --frozen-lockfile \
+      --fetch-timeout=600000 \
+      --fetch-retries=5 \
+      --fetch-retry-maxtimeout=120000 \
+      --network-concurrency=8
 
 FROM deps AS builder
 COPY . .
@@ -30,7 +36,13 @@ COPY packages/config/package.json packages/config/package.json
 COPY packages/contracts/package.json packages/contracts/package.json
 COPY packages/database/package.json packages/database/package.json
 COPY packages/ui/package.json packages/ui/package.json
-RUN corepack pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=uok-pnpm-store,target=/pnpm/store \
+    corepack pnpm config set store-dir /pnpm/store && \
+    corepack pnpm install --frozen-lockfile \
+      --fetch-timeout=600000 \
+      --fetch-retries=5 \
+      --fetch-retry-maxtimeout=120000 \
+      --network-concurrency=8
 COPY . .
 RUN corepack pnpm prisma:generate
 CMD ["corepack", "pnpm", "test:e2e"]

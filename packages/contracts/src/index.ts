@@ -18,6 +18,90 @@ export type {
 export { healthResponseSchema } from "./health.js";
 export type { HealthResponse } from "./health.js";
 export { createPaginatedResponseSchema } from "./pagination.js";
+export {
+  createMasterDataRequestSchema,
+  createProductRequestSchema,
+  masterDataListResponseSchema,
+  masterDataResponseSchema,
+  paginatedProductsResponseSchema,
+  productListQuerySchema,
+  productResponseSchema,
+  thbDecimalSchema,
+  updateMasterDataRequestSchema,
+  updateProductRequestSchema
+} from "./product.js";
+export type {
+  CreateMasterDataRequest,
+  CreateProductRequest,
+  MasterDataResponse,
+  PaginatedProductsResponse,
+  ProductListQuery,
+  ProductResponse,
+  UpdateMasterDataRequest,
+  UpdateProductRequest
+} from "./product.js";
+export {
+  inventoryMovementTypeSchema,
+  lotListQuerySchema,
+  lotResponseSchema,
+  paginatedLotsResponseSchema,
+  reconciliationItemSchema,
+  reconciliationResponseSchema,
+  stockSummaryResponseSchema
+} from "./inventory.js";
+export type {
+  InventoryMovementType,
+  LotListQuery,
+  LotResponse,
+  PaginatedLotsResponse,
+  ReconciliationResponse,
+  StockSummaryResponse
+} from "./inventory.js";
+export {
+  createStockInRequestSchema,
+  paginatedStockInsResponseSchema,
+  stockInListQuerySchema,
+  stockInResponseSchema
+} from "./stock-in.js";
+export type {
+  CreateStockInRequest,
+  PaginatedStockInsResponse,
+  StockInListQuery,
+  StockInResponse
+} from "./stock-in.js";
+export {
+  createInventoryAdjustmentRequestSchema,
+  inventoryAdjustmentDirectionSchema,
+  inventoryAdjustmentListQuerySchema,
+  inventoryAdjustmentResponseSchema,
+  paginatedInventoryAdjustmentsResponseSchema
+} from "./adjustment.js";
+export type {
+  CreateInventoryAdjustmentRequest,
+  InventoryAdjustmentDirection,
+  InventoryAdjustmentListQuery,
+  InventoryAdjustmentResponse,
+  PaginatedInventoryAdjustmentsResponse
+} from "./adjustment.js";
+export {
+  dashboardAlertsResponseSchema,
+  expiryAlertListQuerySchema,
+  expiryAlertResponseSchema,
+  expiryAlertStatusSchema,
+  lowStockAlertListQuerySchema,
+  lowStockAlertResponseSchema,
+  paginatedExpiryAlertsResponseSchema,
+  paginatedLowStockAlertsResponseSchema
+} from "./dashboard-alerts.js";
+export type {
+  DashboardAlertsResponse,
+  ExpiryAlertListQuery,
+  ExpiryAlertResponse,
+  LowStockAlertListQuery,
+  LowStockAlertResponse,
+  PaginatedExpiryAlertsResponse,
+  PaginatedLowStockAlertsResponse
+} from "./dashboard-alerts.js";
 export { hasPermission, Permission, permissionsByRole, Role } from "./rbac.js";
 export type {
   Permission as PermissionValue,

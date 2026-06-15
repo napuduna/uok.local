@@ -3,6 +3,8 @@ import { UserRole } from "../src/generated/client/enums.js";
 import { createDatabaseAdapter } from "../src/client.js";
 
 const salesFixtureEmail = "sales.e2e@uok.local";
+const productFixtureCode = "E2E-PRODUCT-AUTO";
+const stockInProductFixtureCode = "E2E-STOCK-IN-PRODUCT";
 const action = process.argv[2];
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -16,12 +18,14 @@ const database = new PrismaClient({
 
 try {
   if (action === "setup") {
-    const [admin, salesRole] = await Promise.all([
+    const [admin, salesRole, category, unit] = await Promise.all([
       database.user.findUnique({ where: { email: "admin@uok.local" } }),
-      database.role.findUnique({ where: { name: UserRole.SALES } })
+      database.role.findUnique({ where: { name: UserRole.SALES } }),
+      database.category.findUnique({ where: { code: "GENERAL" } }),
+      database.unit.findUnique({ where: { code: "PCS" } })
     ]);
 
-    if (!admin || !salesRole) {
+    if (!admin || !salesRole || !category || !unit) {
       throw new Error("Run prisma:seed before Playwright tests");
     }
 
@@ -42,7 +46,35 @@ try {
         roleId: salesRole.id
       }
     });
+    await database.product.deleteMany({
+      where: { code: productFixtureCode }
+    });
+    await database.product.upsert({
+      where: { code: stockInProductFixtureCode },
+      update: {
+        name: "สินค้าทดสอบรับเข้า",
+        categoryId: category.id,
+        unitId: unit.id,
+        salePrice: "25.00",
+        lowStockThreshold: 50,
+        isActive: true,
+        archivedAt: null
+      },
+      create: {
+        code: stockInProductFixtureCode,
+        name: "สินค้าทดสอบรับเข้า",
+        categoryId: category.id,
+        unitId: unit.id,
+        salePrice: "25.00",
+        lowStockThreshold: 50
+      }
+    });
   } else if (action === "cleanup") {
+    await database.product.deleteMany({
+      where: {
+        code: { in: [productFixtureCode, stockInProductFixtureCode] }
+      }
+    });
     await database.user.deleteMany({ where: { email: salesFixtureEmail } });
   } else {
     throw new Error("Expected E2E fixture action: setup or cleanup");
