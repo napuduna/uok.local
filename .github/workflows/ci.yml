@@ -18,13 +18,14 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: corepack enable
       - run: corepack pnpm install --frozen-lockfile
       - run: corepack pnpm prisma:generate
+      - run: corepack pnpm build:packages
       - run: docker compose config --quiet
       - run: corepack pnpm lint
       - run: corepack pnpm typecheck
@@ -57,13 +58,14 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: corepack enable
       - run: corepack pnpm install --frozen-lockfile
       - run: corepack pnpm prisma:generate
+      - run: corepack pnpm build:packages
       - run: corepack pnpm prisma:migrate:verify
       - run: corepack pnpm prisma:migrate:deploy
       - run: corepack pnpm prisma:seed
@@ -76,8 +78,8 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: corepack enable
@@ -94,10 +96,10 @@ jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: corepack enable
