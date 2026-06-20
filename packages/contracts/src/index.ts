@@ -155,3 +155,4 @@ export type {
   Permission as PermissionValue,
   Role as RoleValue
 } from "./rbac.js";
+export * from "./report.js";

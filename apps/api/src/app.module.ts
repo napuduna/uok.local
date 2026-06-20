@@ -11,6 +11,7 @@ import { DashboardModule } from "./dashboard/dashboard.module";
 import { DatabaseModule } from "./database/database.module";
 import { HealthController } from "./health/health.controller";
 import { RedisModule } from "./redis/redis.module";
+import { ReportsModule } from "./reports/reports.module";
 import { SalesModule } from "./sales/sales.module";
 import { StockInsModule } from "./stock-ins/stock-ins.module";
 import { RequestIdMiddleware } from "./common/request-id.middleware";
@@ -30,6 +31,7 @@ import { UsersModule } from "./users/users.module";
     AdjustmentsModule,
     DashboardModule,
     CustomersModule,
+    ReportsModule,
     SalesModule
   ],
   controllers: [HealthController]

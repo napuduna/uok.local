@@ -395,11 +395,11 @@ MVP is releasable only when all Phase 1-3 acceptance criteria and this gate pass
 
 ### Task 4.1: Report Query Layer
 
-- [ ] Implement date-range sales reports grouped daily, monthly and yearly
-- [ ] Implement current stock, low-stock, expired and expiring reports
-- [ ] Implement top-customer and new-customer reports
-- [ ] Implement daily, monthly and yearly gross-profit reports
-- [ ] Apply role-scoped filters before aggregation
+- [x] Implement date-range sales reports grouped daily, monthly and yearly
+- [x] Implement current stock, low-stock, expired and expiring reports
+- [x] Implement top-customer and new-customer reports
+- [x] Implement daily, monthly and yearly gross-profit reports
+- [x] Apply role-scoped filters before aggregation
 
 **Acceptance**
 
