@@ -6,10 +6,12 @@ import {
 
 import { AuthModule } from "./auth/auth.module";
 import { AdjustmentsModule } from "./adjustments/adjustments.module";
+import { CustomersModule } from "./customers/customers.module";
 import { DashboardModule } from "./dashboard/dashboard.module";
 import { DatabaseModule } from "./database/database.module";
 import { HealthController } from "./health/health.controller";
 import { RedisModule } from "./redis/redis.module";
+import { SalesModule } from "./sales/sales.module";
 import { StockInsModule } from "./stock-ins/stock-ins.module";
 import { RequestIdMiddleware } from "./common/request-id.middleware";
 import { InventoryModule } from "./inventory/inventory.module";
@@ -26,7 +28,9 @@ import { UsersModule } from "./users/users.module";
     InventoryModule,
     StockInsModule,
     AdjustmentsModule,
-    DashboardModule
+    DashboardModule,
+    CustomersModule,
+    SalesModule
   ],
   controllers: [HealthController]
 })

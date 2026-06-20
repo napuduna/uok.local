@@ -85,6 +85,7 @@ export type {
 } from "./adjustment.js";
 export {
   dashboardAlertsResponseSchema,
+  dashboardSummaryResponseSchema,
   expiryAlertListQuerySchema,
   expiryAlertResponseSchema,
   expiryAlertStatusSchema,
@@ -95,6 +96,7 @@ export {
 } from "./dashboard-alerts.js";
 export type {
   DashboardAlertsResponse,
+  DashboardSummaryResponse,
   ExpiryAlertListQuery,
   ExpiryAlertResponse,
   LowStockAlertListQuery,
@@ -102,6 +104,52 @@ export type {
   PaginatedExpiryAlertsResponse,
   PaginatedLowStockAlertsResponse
 } from "./dashboard-alerts.js";
+export {
+  createCustomerRequestSchema,
+  customerGenderSchema,
+  customerListQuerySchema,
+  customerPurchaseHistoryItemSchema,
+  customerPurchaseHistoryQuerySchema,
+  customerPurchaseHistoryResponseSchema,
+  customerResponseSchema,
+  paginatedCustomersResponseSchema,
+  updateCustomerRequestSchema
+} from "./customer.js";
+export type {
+  CreateCustomerRequest,
+  CustomerGender,
+  CustomerListQuery,
+  CustomerPurchaseHistoryQuery,
+  CustomerPurchaseHistoryResponse,
+  CustomerResponse,
+  PaginatedCustomersResponse,
+  UpdateCustomerRequest
+} from "./customer.js";
+export {
+  cancelSaleRequestSchema,
+  createSaleItemRequestSchema,
+  createSaleRequestSchema,
+  paginatedSaleCatalogResponseSchema,
+  paginatedSalesResponseSchema,
+  saleAllocationResponseSchema,
+  saleCatalogItemSchema,
+  saleCatalogQuerySchema,
+  saleItemResponseSchema,
+  saleListQuerySchema,
+  saleResponseSchema,
+  saleStatusSchema
+} from "./sale.js";
+export type {
+  CancelSaleRequest,
+  CreateSaleRequest,
+  PaginatedSaleCatalogResponse,
+  PaginatedSalesResponse,
+  SaleCatalogItem,
+  SaleCatalogQuery,
+  SaleListQuery,
+  SaleResponse,
+  SaleStatus
+} from "./sale.js";
 export { hasPermission, Permission, permissionsByRole, Role } from "./rbac.js";
 export type {
   Permission as PermissionValue,

@@ -26,7 +26,8 @@ function mapLot(lot: LotRecord): LotResponse {
   const saleMovementTotal = lot.movements
     .filter(
       (movement) =>
-        movement.type === "SALE" || movement.type === "SALE_CANCELLATION"
+        movement.type === "SALE_OUT" ||
+        movement.type === "SALE_CANCELLATION_IN"
     )
     .reduce((total, movement) => total + movement.quantityDelta, 0);
   const adjusted = lot.movements

@@ -294,10 +294,10 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.1: Customers
 
-- [ ] Implement customer code, name, surname, age, gender, address, phone and joined date
-- [ ] Add list, search, pagination, create, edit and archive
-- [ ] Normalize phone search without destroying the stored display value
-- [ ] Add purchase-history endpoint and detail page
+- [x] Implement customer code, name, surname, age, gender, address, phone and joined date
+- [x] Add list, search, pagination, create, edit and archive
+- [x] Normalize phone search without destroying the stored display value
+- [x] Add purchase-history endpoint and detail page
 
 **Acceptance**
 
@@ -306,12 +306,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.2: FIFO Allocation Engine
 
-- [ ] Implement a pure allocation function for ordered lot candidates
-- [ ] Exclude expired, archived and empty lots
-- [ ] Order by `receivedAt`, `createdAt`, then `id`
-- [ ] Return allocations or `INSUFFICIENT_STOCK` without partial result
-- [ ] Add fixture test for `LOT001=300` and `LOT002=200`
-- [ ] Add deterministic tie-order and multi-lot tests
+- [x] Implement a pure allocation function for ordered lot candidates
+- [x] Exclude expired, archived and empty lots
+- [x] Order by `receivedAt`, `createdAt`, then `id`
+- [x] Return allocations or `INSUFFICIENT_STOCK` without partial result
+- [x] Add fixture test for `LOT001=300` and `LOT002=200`
+- [x] Add deterministic tie-order and multi-lot tests
 
 **Acceptance**
 
@@ -321,13 +321,13 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.3: Transactional Sale Creation
 
-- [ ] Implement invoice number generation with database uniqueness
-- [ ] Validate customer, sale items, integer quantity and sale price
-- [ ] Open transaction and lock candidate lot rows per product
-- [ ] Allocate FIFO and create Sale, SaleItem, SaleAllocation and `SALE_OUT` movements
-- [ ] Snapshot unit cost and subtotal on every allocation
-- [ ] Add idempotency handling and `409` mapping
-- [ ] Add parallel integration test for competing sales
+- [x] Implement invoice number generation with database uniqueness
+- [x] Validate customer, sale items, integer quantity and sale price
+- [x] Open transaction and lock candidate lot rows per product
+- [x] Allocate FIFO and create Sale, SaleItem, SaleAllocation and `SALE_OUT` movements
+- [x] Snapshot unit cost and subtotal on every allocation
+- [x] Add idempotency handling and `409` mapping
+- [x] Add parallel integration test for competing sales
 
 **Acceptance**
 
@@ -338,12 +338,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.4: Sales UI And History
 
-- [ ] Build sale workspace with customer selection and searchable product rows
-- [ ] Show availability, quantity, price and order total before confirmation
-- [ ] Prevent duplicate submit while preserving idempotency key on retry
-- [ ] Build sales list with date/customer/invoice filters and pagination
-- [ ] Build invoice detail with lot allocations, cost and gross profit
-- [ ] Apply Sales own-sales visibility policy
+- [x] Build sale workspace with customer selection and searchable product rows
+- [x] Show availability, quantity, price and order total before confirmation
+- [x] Prevent duplicate submit while preserving idempotency key on retry
+- [x] Build sales list with date/customer/invoice filters and pagination
+- [x] Build invoice detail with lot allocations, cost and gross profit
+- [x] Apply Sales own-sales visibility policy
 
 **Acceptance**
 
@@ -353,12 +353,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.5: Whole-Invoice Cancellation
 
-- [ ] Permit cancellation only for completed, non-cancelled invoices
-- [ ] Lock sale and allocated lots
-- [ ] Restore quantities to the exact original lots
-- [ ] Create `SALE_CANCELLATION_IN` movements and cancellation audit
-- [ ] Keep original sale/allocation values immutable
-- [ ] Require cancellation reason and Admin/Sales permission
+- [x] Permit cancellation only for completed, non-cancelled invoices
+- [x] Lock sale and allocated lots
+- [x] Restore quantities to the exact original lots
+- [x] Create `SALE_CANCELLATION_IN` movements and cancellation audit
+- [x] Keep original sale/allocation values immutable
+- [x] Require cancellation reason and Admin/Sales permission
 
 **Acceptance**
 
@@ -368,11 +368,11 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.6: Dashboard And Costing
 
-- [ ] Add cards for product count, stock quantity, today/month sales, customers and low-stock count
-- [ ] Add daily/monthly sales, top products and monthly gross-profit queries
-- [ ] Add inventory value from available quantity multiplied by lot unit cost
-- [ ] Add sold cost from allocation snapshots
-- [ ] Apply role-specific visibility
+- [x] Add cards for product count, stock quantity, today/month sales, customers and low-stock count
+- [x] Add daily/monthly sales, top products and monthly gross-profit queries
+- [x] Add inventory value from available quantity multiplied by lot unit cost
+- [x] Add sold cost from allocation snapshots
+- [x] Apply role-specific visibility
 
 **Acceptance**
 
@@ -382,12 +382,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### MVP Release Gate
 
-- [ ] Run full lint, typecheck, unit, integration and Playwright suites in Docker
-- [ ] Run FIFO and concurrent-sale tests repeatedly without oversell
-- [ ] Verify RBAC allow/deny matrix through API tests
-- [ ] Verify migration from the previous release fixture
-- [ ] Run backup of the MVP database before production migration
-- [ ] Complete smoke test through the proxy
+- [x] Run full lint, typecheck, unit, integration and Playwright suites in Docker
+- [x] Run FIFO and concurrent-sale tests repeatedly without oversell
+- [x] Verify RBAC allow/deny matrix through API tests
+- [x] Verify migration from the previous release fixture
+- [x] Run backup of the MVP database before production migration
+- [x] Complete smoke test through the proxy
 
 MVP is releasable only when all Phase 1-3 acceptance criteria and this gate pass.
 

@@ -14,9 +14,11 @@ describe.skipIf(process.env.RUN_INTEGRATION_TESTS !== "true")(
     let application: INestApplication;
     let database: DatabaseClient;
     let cookie: string;
+    let salesCookie: string;
     let warehouseId: string;
     let categoryId: string;
     let unitId: string;
+    let dashboardProductId: string;
 
     const now = new Date();
     const daysFromNow = (days: number) =>
@@ -70,7 +72,11 @@ describe.skipIf(process.env.RUN_INTEGRATION_TESTS !== "true")(
       await application.init();
       database = application.get(DatabaseService).client;
 
-      const [warehouse, category, unit] = await Promise.all([
+      const [admin, salesRole, warehouse, category, unit] = await Promise.all([
+        database.user.findUniqueOrThrow({
+          where: { email: "admin@uok.local" }
+        }),
+        database.role.findUniqueOrThrow({ where: { name: "SALES" } }),
         database.warehouse.findFirstOrThrow({
           where: { isDefault: true, isActive: true }
         }),
@@ -80,12 +86,25 @@ describe.skipIf(process.env.RUN_INTEGRATION_TESTS !== "true")(
       warehouseId = warehouse.id;
       categoryId = category.id;
       unitId = unit.id;
+      await database.user.create({
+        data: {
+          email: "sales.dashboard@uok.local",
+          name: "Dashboard Sales",
+          passwordHash: admin.passwordHash,
+          roleId: salesRole.id
+        }
+      });
 
       const login = await request(application.getHttpServer())
         .post("/api/v1/auth/login")
         .send({ email: "admin@uok.local", password: "ChangeMe123!" })
         .expect(200);
       cookie = login.get("set-cookie")?.[0] ?? "";
+      const salesLogin = await request(application.getHttpServer())
+        .post("/api/v1/auth/login")
+        .send({ email: "sales.dashboard@uok.local", password: "ChangeMe123!" })
+        .expect(200);
+      salesCookie = salesLogin.get("set-cookie")?.[0] ?? "";
 
       const [low, enough, zero, archived, expiry] = await Promise.all([
         createProduct("ALERT-LOW"),
@@ -150,6 +169,44 @@ describe.skipIf(process.env.RUN_INTEGRATION_TESTS !== "true")(
       ]);
 
       expect(zero.id).toBeTruthy();
+
+      const [dashboardProduct, customer] = await Promise.all([
+        createProduct("DASHBOARD-SALE", { threshold: 10 }),
+        database.customer.create({
+          data: {
+            code: "DASHBOARD-CUSTOMER",
+            firstName: "Dashboard",
+            lastName: "Customer",
+            age: 30,
+            gender: "UNSPECIFIED",
+            address: "",
+            phone: "",
+            phoneNormalized: "",
+            joinedAt: new Date()
+          }
+        })
+      ]);
+      dashboardProductId = dashboardProduct.id;
+      await createLot({
+        productId: dashboardProduct.id,
+        lotNumber: "DASHBOARD-LOT",
+        quantity: 500
+      });
+      await request(application.getHttpServer())
+        .post("/api/v1/sales")
+        .set("cookie", cookie)
+        .set("idempotency-key", "dashboard-summary-sale")
+        .send({
+          customerId: customer.id,
+          items: [
+            {
+              productId: dashboardProduct.id,
+              quantity: 2,
+              unitPrice: "30.00"
+            }
+          ]
+        })
+        .expect(201);
     });
 
     afterAll(async () => {
@@ -231,6 +288,47 @@ describe.skipIf(process.env.RUN_INTEGRATION_TESTS !== "true")(
           expiryItems: expect.any(Array)
         })
       );
+    });
+
+    it("returns role-scoped sales, inventory value and top product summary", async () => {
+      const adminSummary = await request(application.getHttpServer())
+        .get("/api/v1/dashboard/summary")
+        .set("cookie", cookie)
+        .expect(200);
+      expect(Number(adminSummary.body.cards.monthSales)).toBeGreaterThanOrEqual(
+        60
+      );
+      expect(
+        Number(adminSummary.body.cards.monthSoldCost)
+      ).toBeGreaterThanOrEqual(40);
+      expect(
+        Number(adminSummary.body.cards.monthGrossProfit)
+      ).toBeGreaterThanOrEqual(20);
+      expect(adminSummary.body.topProducts).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            product: expect.objectContaining({
+              id: dashboardProductId,
+              code: "DASHBOARD-SALE"
+            }),
+            quantitySold: 2,
+            totalSales: "60.00"
+          })
+        ])
+      );
+      expect(adminSummary.body.cards.inventoryValue).toEqual(expect.any(String));
+
+      const salesSummary = await request(application.getHttpServer())
+        .get("/api/v1/dashboard/summary")
+        .set("cookie", salesCookie)
+        .expect(200);
+      expect(salesSummary.body.cards).toMatchObject({
+        monthSales: "0.00",
+        monthSoldCost: "0.00",
+        monthGrossProfit: "0.00",
+        inventoryValue: null
+      });
+      expect(salesSummary.body.topProducts).toEqual([]);
     });
   }
 );

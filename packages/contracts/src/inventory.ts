@@ -18,8 +18,8 @@ export const inventoryMovementTypeSchema = z.enum([
   "STOCK_IN",
   "ADJUSTMENT_IN",
   "ADJUSTMENT_OUT",
-  "SALE",
-  "SALE_CANCELLATION"
+  "SALE_OUT",
+  "SALE_CANCELLATION_IN"
 ]);
 
 export const lotListQuerySchema = z.object({

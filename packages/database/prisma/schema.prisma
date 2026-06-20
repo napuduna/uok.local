@@ -21,13 +21,25 @@ enum InventoryMovementType {
   STOCK_IN
   ADJUSTMENT_IN
   ADJUSTMENT_OUT
-  SALE
-  SALE_CANCELLATION
+  SALE_OUT
+  SALE_CANCELLATION_IN
 }
 
 enum InventoryAdjustmentDirection {
   INCREASE
   DECREASE
+}
+
+enum CustomerGender {
+  MALE
+  FEMALE
+  OTHER
+  UNSPECIFIED
+}
+
+enum SaleStatus {
+  COMPLETED
+  CANCELLED
 }
 
 model Warehouse {
@@ -42,6 +54,7 @@ model Warehouse {
   inventoryMovements InventoryMovement[]
   stockIns           StockIn[]
   adjustments        InventoryAdjustment[]
+  sales              Sale[]
 }
 
 model Role {
@@ -69,6 +82,8 @@ model User {
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   createdStockIns    StockIn[]           @relation("StockInCreator")
   createdAdjustments InventoryAdjustment[] @relation("InventoryAdjustmentCreator")
+  createdSales       Sale[]                @relation("SaleCreator")
+  cancelledSales     Sale[]                @relation("SaleCanceller")
 }
 
 model AuditLog {
@@ -126,6 +141,7 @@ model Product {
   updatedAt         DateTime      @updatedAt
   lots              Lot[]
   stockInItems      StockInItem[]
+  saleItems         SaleItem[]
 
   @@index([categoryId, isActive])
   @@index([unitId, isActive])
@@ -150,6 +166,7 @@ model Lot {
   movements         InventoryMovement[]
   stockInItem       StockInItem?
   adjustments       InventoryAdjustment[]
+  saleAllocations   SaleAllocation[]
 
   @@unique([productId, warehouseId, lotNumber])
   @@index([productId, warehouseId, isActive])
@@ -235,4 +252,91 @@ model InventoryAdjustment {
   @@index([warehouseId, createdAt, id])
   @@index([lotId, createdAt, id])
   @@index([createdById, createdAt])
+}
+
+model Customer {
+  id              String         @id @default(uuid()) @db.Uuid
+  code            String         @unique
+  firstName       String
+  lastName        String
+  age             Int
+  gender          CustomerGender
+  address         String
+  phone           String
+  phoneNormalized String
+  joinedAt        DateTime
+  isActive        Boolean        @default(true)
+  archivedAt      DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  sales           Sale[]
+
+  @@index([isActive, code, id])
+  @@index([firstName, lastName])
+  @@index([phoneNormalized])
+}
+
+model Sale {
+  id                 String      @id @default(uuid()) @db.Uuid
+  invoiceNumber      String      @unique
+  customerId         String      @db.Uuid
+  customer           Customer    @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  warehouseId        String      @db.Uuid
+  warehouse          Warehouse   @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  status             SaleStatus  @default(COMPLETED)
+  soldAt             DateTime
+  totalSales         Decimal     @db.Decimal(14, 2)
+  totalCost          Decimal     @db.Decimal(14, 2)
+  grossProfit        Decimal     @db.Decimal(14, 2)
+  idempotencyKey     String      @unique
+  requestHash        String
+  createdById        String      @db.Uuid
+  createdBy          User        @relation("SaleCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  requestId          String?
+  cancelledAt        DateTime?
+  cancellationReason String?
+  cancellationIdempotencyKey String? @unique
+  cancellationRequestHash    String?
+  cancelledById      String?     @db.Uuid
+  cancelledBy        User?       @relation("SaleCanceller", fields: [cancelledById], references: [id], onDelete: Restrict)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  items              SaleItem[]
+
+  @@index([soldAt, id])
+  @@index([customerId, soldAt, id])
+  @@index([createdById, soldAt, id])
+  @@index([warehouseId, soldAt, id])
+  @@index([status, soldAt, id])
+}
+
+model SaleItem {
+  id            String           @id @default(uuid()) @db.Uuid
+  saleId        String           @db.Uuid
+  sale          Sale             @relation(fields: [saleId], references: [id], onDelete: Restrict)
+  productId     String           @db.Uuid
+  product       Product          @relation(fields: [productId], references: [id], onDelete: Restrict)
+  quantity      Int
+  unitPrice     Decimal          @db.Decimal(12, 2)
+  salesSubtotal Decimal          @db.Decimal(14, 2)
+  costSubtotal  Decimal          @db.Decimal(14, 2)
+  grossProfit   Decimal          @db.Decimal(14, 2)
+  allocations   SaleAllocation[]
+
+  @@unique([saleId, productId])
+  @@index([productId, saleId])
+}
+
+model SaleAllocation {
+  id           String   @id @default(uuid()) @db.Uuid
+  saleItemId   String   @db.Uuid
+  saleItem     SaleItem @relation(fields: [saleItemId], references: [id], onDelete: Restrict)
+  lotId        String   @db.Uuid
+  lot          Lot      @relation(fields: [lotId], references: [id], onDelete: Restrict)
+  quantity     Int
+  unitCost     Decimal  @db.Decimal(12, 2)
+  costSubtotal Decimal  @db.Decimal(14, 2)
+
+  @@unique([saleItemId, lotId])
+  @@index([lotId, saleItemId])
 }

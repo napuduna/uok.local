@@ -27,7 +27,7 @@ const lot = {
   createdAt: new Date("2026-06-15T00:00:00.000Z"),
   movements: [
     { type: "STOCK_IN", quantityDelta: 300 },
-    { type: "SALE", quantityDelta: -100 },
+    { type: "SALE_OUT", quantityDelta: -100 },
     { type: "ADJUSTMENT_OUT", quantityDelta: -10 }
   ]
 };
@@ -92,7 +92,7 @@ describe("InventoryService", () => {
         availableQuantity: 195,
         movements: [
           { type: "STOCK_IN", quantityDelta: 300 },
-          { type: "SALE", quantityDelta: -100 },
+          { type: "SALE_OUT", quantityDelta: -100 },
           { type: "ADJUSTMENT_OUT", quantityDelta: -10 }
         ]
       }

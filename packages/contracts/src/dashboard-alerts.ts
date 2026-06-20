@@ -53,6 +53,40 @@ export const expiryAlertResponseSchema = z.object({
 export const paginatedExpiryAlertsResponseSchema =
   createPaginatedResponseSchema(expiryAlertResponseSchema);
 
+const fixedDecimalSchema = z.string().regex(/^\d+\.\d{2}$/);
+const nullableFixedDecimalSchema = fixedDecimalSchema.nullable();
+
+export const dashboardSummaryResponseSchema = z.object({
+  asOf: z.string().datetime(),
+  warehouse: warehouseIdentitySchema,
+  cards: z.object({
+    productCount: z.number().int().nonnegative(),
+    stockQuantity: z.number().int().nonnegative(),
+    customerCount: z.number().int().nonnegative(),
+    lowStockCount: z.number().int().nonnegative(),
+    todaySales: nullableFixedDecimalSchema,
+    monthSales: nullableFixedDecimalSchema,
+    inventoryValue: nullableFixedDecimalSchema,
+    monthSoldCost: nullableFixedDecimalSchema,
+    monthGrossProfit: nullableFixedDecimalSchema
+  }),
+  dailySales: z.array(
+    z.object({
+      date: z.string().date(),
+      totalSales: fixedDecimalSchema,
+      totalCost: fixedDecimalSchema,
+      grossProfit: z.string().regex(/^-?\d+\.\d{2}$/)
+    })
+  ),
+  topProducts: z.array(
+    z.object({
+      product: productIdentitySchema,
+      quantitySold: z.number().int().positive(),
+      totalSales: fixedDecimalSchema
+    })
+  )
+});
+
 export const dashboardAlertsResponseSchema = z.object({
   warehouse: warehouseIdentitySchema,
   lowStockCount: z.number().int().nonnegative(),
@@ -76,4 +110,7 @@ export type PaginatedExpiryAlertsResponse = z.infer<
 >;
 export type DashboardAlertsResponse = z.infer<
   typeof dashboardAlertsResponseSchema
+>;
+export type DashboardSummaryResponse = z.infer<
+  typeof dashboardSummaryResponseSchema
 >;

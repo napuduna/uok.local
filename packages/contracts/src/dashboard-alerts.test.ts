@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   dashboardAlertsResponseSchema,
+  dashboardSummaryResponseSchema,
   expiryAlertListQuerySchema,
   lowStockAlertListQuerySchema
 } from "./dashboard-alerts.js";
@@ -28,6 +29,41 @@ describe("dashboard alert contracts", () => {
       status: "expiring",
       daysAhead: 45
     });
+  });
+
+  it("validates role-scoped dashboard summary metrics", () => {
+    const result = dashboardSummaryResponseSchema.parse({
+      asOf: "2026-06-16T00:00:00.000Z",
+      warehouse: { id: warehouseId, code: "MAIN", name: "Main warehouse" },
+      cards: {
+        productCount: 2,
+        stockQuantity: 1400,
+        customerCount: 1,
+        lowStockCount: 1,
+        todaySales: "15000.00",
+        monthSales: "15000.00",
+        inventoryValue: null,
+        monthSoldCost: "10400.00",
+        monthGrossProfit: "4600.00"
+      },
+      dailySales: [
+        {
+          date: "2026-06-16",
+          totalSales: "15000.00",
+          totalCost: "10400.00",
+          grossProfit: "4600.00"
+        }
+      ],
+      topProducts: [
+        {
+          product: { id: productId, code: "P001", name: "Product" },
+          quantitySold: 500,
+          totalSales: "15000.00"
+        }
+      ]
+    });
+
+    expect(result.cards.monthGrossProfit).toBe("4600.00");
   });
 
   it("validates dashboard alert counts and preview items", () => {

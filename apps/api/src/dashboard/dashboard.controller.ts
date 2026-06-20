@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Query,
+  Req,
   UseGuards
 } from "@nestjs/common";
 import { z } from "zod";
@@ -14,6 +15,7 @@ import {
 } from "@warehouse/contracts";
 
 import { PermissionGuard } from "../auth/permission.guard";
+import type { AuthenticatedRequest } from "../auth/authenticated-request";
 import { RequirePermissions } from "../auth/require-permission.decorator";
 import { SessionAuthGuard } from "../auth/session-auth.guard";
 import { DashboardService } from "./dashboard.service";
@@ -39,6 +41,14 @@ export class DashboardController {
   @Get("alerts")
   alerts() {
     return this.dashboard.getAlerts();
+  }
+
+  @Get("summary")
+  summary(@Req() request: AuthenticatedRequest) {
+    return this.dashboard.getSummary({
+      actorId: request.auth!.id,
+      role: request.auth!.role
+    });
   }
 
   @Get("alerts/low-stock")
