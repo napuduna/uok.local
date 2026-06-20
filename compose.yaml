@@ -67,6 +67,8 @@ services:
       REDIS_URL: redis://redis:6379
       SESSION_SECRET: ${SESSION_SECRET:-local-development-session-secret-32-characters}
       SMOKE_BASE_URL: http://proxy
+    volumes:
+      - export_artifacts:/var/lib/uok/exports
     restart: unless-stopped
     healthcheck:
       test:
@@ -96,7 +98,11 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-warehouse}:${POSTGRES_PASSWORD:-warehouse}@postgres:5432/${POSTGRES_DB:-warehouse}?schema=public
       REDIS_URL: redis://redis:6379
       SESSION_SECRET: ${SESSION_SECRET:-local-development-session-secret-32-characters}
+      EXPORT_ARTIFACT_DIR: ${EXPORT_ARTIFACT_DIR:-/var/lib/uok/exports}
+      EXPORT_THAI_FONT_PATH: ${EXPORT_THAI_FONT_PATH:-/workspace/apps/worker/node_modules/@fontsource/noto-sans-thai/files/noto-sans-thai-thai-400-normal.woff2}
     restart: unless-stopped
+    volumes:
+      - export_artifacts:/var/lib/uok/exports
     healthcheck:
       test:
         [
@@ -175,3 +181,4 @@ volumes:
   postgres_data:
   redis_data:
   backup_artifacts:
+  export_artifacts:

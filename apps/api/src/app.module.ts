@@ -9,6 +9,7 @@ import { AdjustmentsModule } from "./adjustments/adjustments.module";
 import { CustomersModule } from "./customers/customers.module";
 import { DashboardModule } from "./dashboard/dashboard.module";
 import { DatabaseModule } from "./database/database.module";
+import { ExportsModule } from "./exports/exports.module";
 import { HealthController } from "./health/health.controller";
 import { RedisModule } from "./redis/redis.module";
 import { ReportsModule } from "./reports/reports.module";
@@ -32,6 +33,7 @@ import { UsersModule } from "./users/users.module";
     DashboardModule,
     CustomersModule,
     ReportsModule,
+    ExportsModule,
     SalesModule
   ],
   controllers: [HealthController]

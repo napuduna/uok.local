@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { PrismaClient } from "../src/generated/client/client.js";
 import { UserRole } from "../src/generated/client/enums.js";
 import { createDatabaseAdapter } from "../src/client.js";
@@ -176,6 +178,44 @@ try {
             occurredAt: stockIn.receivedAt,
             referenceType: "STOCK_IN",
             referenceId: stockIn.id
+          }
+        });
+      });
+    } else if (existingSaleLot.availableQuantity < 1000) {
+      const quantity = 1000 - existingSaleLot.availableQuantity;
+      const adjustmentId = randomUUID();
+      await database.$transaction(async (transaction) => {
+        await transaction.inventoryAdjustment.create({
+          data: {
+            id: adjustmentId,
+            referenceNumber: `E2E-SALE-RESET-${randomUUID()}`,
+            warehouseId: warehouse.id,
+            lotId: existingSaleLot.id,
+            direction: "INCREASE",
+            quantity,
+            quantityDelta: quantity,
+            reason: "Reset E2E sale fixture stock",
+            beforeQuantity: existingSaleLot.availableQuantity,
+            afterQuantity: 1000,
+            idempotencyKey: randomUUID(),
+            requestHash: randomUUID(),
+            createdById: admin.id
+          }
+        });
+        await transaction.lot.update({
+          where: { id: existingSaleLot.id },
+          data: { availableQuantity: 1000 }
+        });
+        await transaction.inventoryMovement.create({
+          data: {
+            type: "ADJUSTMENT_IN",
+            quantityDelta: quantity,
+            lotId: existingSaleLot.id,
+            warehouseId: warehouse.id,
+            actorId: admin.id,
+            referenceType: "INVENTORY_ADJUSTMENT",
+            referenceId: adjustmentId,
+            reason: "Reset E2E sale fixture stock"
           }
         });
       });

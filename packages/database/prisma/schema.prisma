@@ -42,6 +42,29 @@ enum SaleStatus {
   CANCELLED
 }
 
+enum ExportFormat {
+  XLSX
+  PDF
+}
+
+enum ExportReportType {
+  SALES
+  GROSS_PROFIT
+  INVENTORY_CURRENT
+  INVENTORY_LOW_STOCK
+  INVENTORY_EXPIRY
+  TOP_CUSTOMERS
+  NEW_CUSTOMERS
+}
+
+enum ExportJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
 model Warehouse {
   id                 String              @id @default(uuid()) @db.Uuid
   code               String              @unique
@@ -84,6 +107,7 @@ model User {
   createdAdjustments InventoryAdjustment[] @relation("InventoryAdjustmentCreator")
   createdSales       Sale[]                @relation("SaleCreator")
   cancelledSales     Sale[]                @relation("SaleCanceller")
+  exportJobs         ExportJob[]           @relation("ExportRequester")
 }
 
 model AuditLog {
@@ -339,4 +363,35 @@ model SaleAllocation {
 
   @@unique([saleItemId, lotId])
   @@index([lotId, saleItemId])
+}
+
+model ExportJob {
+  id               String          @id @default(uuid()) @db.Uuid
+  reportType       ExportReportType
+  format           ExportFormat
+  status           ExportJobStatus @default(PENDING)
+  requestedById    String          @db.Uuid
+  requestedBy      User            @relation("ExportRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+  requestedRole    UserRole
+  filters          Json
+  resultSnapshot   Json
+  idempotencyKey   String          @unique
+  requestHash      String
+  requestId        String?
+  fileName         String?
+  contentType      String?
+  artifactPath     String?
+  fileChecksum     String?
+  fileSizeBytes    Int?
+  safeErrorCode    String?
+  safeErrorMessage String?
+  expiresAt        DateTime
+  completedAt      DateTime?
+  failedAt         DateTime?
+  expiredAt        DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([requestedById, createdAt, id])
+  @@index([status, expiresAt, id])
 }

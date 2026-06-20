@@ -24,7 +24,7 @@ FROM deps AS builder
 COPY . .
 RUN corepack pnpm build
 
-FROM mcr.microsoft.com/playwright:v1.60.0-noble AS e2e
+FROM mcr.microsoft.com/playwright:v1.61.0-noble AS e2e
 WORKDIR /workspace
 ENV CI=true
 RUN corepack enable && corepack prepare pnpm@11.6.0 --activate

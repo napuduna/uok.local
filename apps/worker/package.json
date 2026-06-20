@@ -11,17 +11,24 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fontsource/noto-sans-thai": "5.2.8",
     "@nestjs/common": "latest",
     "@nestjs/core": "latest",
     "@nestjs/platform-express": "latest",
     "@warehouse/config": "workspace:*",
     "@warehouse/contracts": "workspace:*",
+    "@warehouse/database": "workspace:*",
+    "bullmq": "5.79.0",
+    "exceljs": "4.4.0",
+    "ioredis": "5.11.1",
+    "pdfkit": "0.19.1",
     "reflect-metadata": "latest",
     "rxjs": "latest"
   },
   "devDependencies": {
     "@nestjs/cli": "latest",
     "@nestjs/testing": "latest",
-    "@types/express": "latest"
+    "@types/express": "latest",
+    "@types/pdfkit": "0.17.6"
   }
 }
