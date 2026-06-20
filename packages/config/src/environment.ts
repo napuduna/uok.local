@@ -20,7 +20,14 @@ const apiEnvironmentSchema = infrastructureSchema.extend({
 
 const workerEnvironmentSchema = infrastructureSchema.extend({
   NODE_ENV: nodeEnvironmentSchema,
-  WORKER_PORT: portSchema(4001)
+  WORKER_PORT: portSchema(4001),
+  EXPORT_ARTIFACT_DIR: z.string().min(1).default("/var/lib/uok/exports"),
+  EXPORT_THAI_FONT_PATH: z
+    .string()
+    .min(1)
+    .default(
+      "/workspace/apps/worker/node_modules/@fontsource/noto-sans-thai/files/noto-sans-thai-thai-400-normal.woff2"
+    )
 });
 
 export type ApiEnvironment = z.infer<typeof apiEnvironmentSchema>;

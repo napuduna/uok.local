@@ -40,5 +40,7 @@ describe("parseWorkerEnvironment", () => {
     });
 
     expect(environment.WORKER_PORT).toBe(4101);
+    expect(environment.EXPORT_ARTIFACT_DIR).toBe("/var/lib/uok/exports");
+    expect(environment.EXPORT_THAI_FONT_PATH).toContain("noto-sans-thai");
   });
 });

@@ -221,11 +221,11 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.1: Products And Master Data
 
-- [ ] Implement Product, Category and Unit schema with unique product code
-- [ ] Add product list, search, filters, pagination, create, edit and archive endpoints
-- [ ] Add Thai table-first UI and form drawer
-- [ ] Add per-product low-stock threshold defaulting to 50
-- [ ] Prevent archive when an active workflow requires the product
+- [x] Implement Product, Category and Unit schema with unique product code
+- [x] Add product list, search, filters, pagination, create, edit and archive endpoints
+- [x] Add Thai table-first UI and form drawer
+- [x] Add per-product low-stock threshold defaulting to 50
+- [x] Prevent archive when an active workflow requires the product
 
 **Acceptance**
 
@@ -235,11 +235,11 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.2: LOT And Inventory Ledger
 
-- [ ] Implement Lot and append-only InventoryMovement schema
-- [ ] Enforce unique lot number within product and warehouse
-- [ ] Add product stock summary and lot detail endpoints
-- [ ] Add lot list showing received, sold, adjusted and available quantities
-- [ ] Add reconciliation query comparing lot availability with movement totals
+- [x] Implement Lot and append-only InventoryMovement schema
+- [x] Enforce unique lot number within product and warehouse
+- [x] Add product stock summary and lot detail endpoints
+- [x] Add lot list showing received, sold, adjusted and available quantities
+- [x] Add reconciliation query comparing lot availability with movement totals
 
 **Acceptance**
 
@@ -249,12 +249,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.3: Stock In
 
-- [ ] Implement StockIn aggregate with one or more items
-- [ ] Validate product, lot number, received date, expiry date, integer quantity and positive unit cost
-- [ ] Create lot and `STOCK_IN` movement atomically
-- [ ] Add idempotency handling
-- [ ] Add stock-in page with review confirmation and receipt detail
-- [ ] Audit creator, request ID and business reference
+- [x] Implement StockIn aggregate with one or more items
+- [x] Validate product, lot number, received date, expiry date, integer quantity and positive unit cost
+- [x] Create lot and `STOCK_IN` movement atomically
+- [x] Add idempotency handling
+- [x] Add stock-in page with review confirmation and receipt detail
+- [x] Audit creator, request ID and business reference
 
 **Acceptance**
 
@@ -264,12 +264,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.4: Inventory Adjustment
 
-- [ ] Implement increase/decrease adjustment with required reason
-- [ ] Require explicit lot selection
-- [ ] Lock lot and validate available quantity for decrease
-- [ ] Create adjustment and movement atomically
-- [ ] Add Warehouse/Admin UI with confirmation
-- [ ] Audit actor, reason and before/after quantity
+- [x] Implement increase/decrease adjustment with required reason
+- [x] Require explicit lot selection
+- [x] Lock lot and validate available quantity for decrease
+- [x] Create adjustment and movement atomically
+- [x] Add Warehouse/Admin UI with confirmation
+- [x] Audit actor, reason and before/after quantity
 
 **Acceptance**
 
@@ -279,10 +279,10 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 2.5: Low-Stock And Expiry Alerts
 
-- [ ] Implement low-stock query from aggregate available quantity and product threshold
-- [ ] Implement expired and expiring-soon lot queries
-- [ ] Add alert count and list to Dashboard shell
-- [ ] Add deterministic filters and pagination
+- [x] Implement low-stock query from aggregate available quantity and product threshold
+- [x] Implement expired and expiring-soon lot queries
+- [x] Add alert count and list to Dashboard shell
+- [x] Add deterministic filters and pagination
 
 **Acceptance**
 
@@ -294,10 +294,10 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.1: Customers
 
-- [ ] Implement customer code, name, surname, age, gender, address, phone and joined date
-- [ ] Add list, search, pagination, create, edit and archive
-- [ ] Normalize phone search without destroying the stored display value
-- [ ] Add purchase-history endpoint and detail page
+- [x] Implement customer code, name, surname, age, gender, address, phone and joined date
+- [x] Add list, search, pagination, create, edit and archive
+- [x] Normalize phone search without destroying the stored display value
+- [x] Add purchase-history endpoint and detail page
 
 **Acceptance**
 
@@ -306,12 +306,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.2: FIFO Allocation Engine
 
-- [ ] Implement a pure allocation function for ordered lot candidates
-- [ ] Exclude expired, archived and empty lots
-- [ ] Order by `receivedAt`, `createdAt`, then `id`
-- [ ] Return allocations or `INSUFFICIENT_STOCK` without partial result
-- [ ] Add fixture test for `LOT001=300` and `LOT002=200`
-- [ ] Add deterministic tie-order and multi-lot tests
+- [x] Implement a pure allocation function for ordered lot candidates
+- [x] Exclude expired, archived and empty lots
+- [x] Order by `receivedAt`, `createdAt`, then `id`
+- [x] Return allocations or `INSUFFICIENT_STOCK` without partial result
+- [x] Add fixture test for `LOT001=300` and `LOT002=200`
+- [x] Add deterministic tie-order and multi-lot tests
 
 **Acceptance**
 
@@ -321,13 +321,13 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.3: Transactional Sale Creation
 
-- [ ] Implement invoice number generation with database uniqueness
-- [ ] Validate customer, sale items, integer quantity and sale price
-- [ ] Open transaction and lock candidate lot rows per product
-- [ ] Allocate FIFO and create Sale, SaleItem, SaleAllocation and `SALE_OUT` movements
-- [ ] Snapshot unit cost and subtotal on every allocation
-- [ ] Add idempotency handling and `409` mapping
-- [ ] Add parallel integration test for competing sales
+- [x] Implement invoice number generation with database uniqueness
+- [x] Validate customer, sale items, integer quantity and sale price
+- [x] Open transaction and lock candidate lot rows per product
+- [x] Allocate FIFO and create Sale, SaleItem, SaleAllocation and `SALE_OUT` movements
+- [x] Snapshot unit cost and subtotal on every allocation
+- [x] Add idempotency handling and `409` mapping
+- [x] Add parallel integration test for competing sales
 
 **Acceptance**
 
@@ -338,12 +338,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.4: Sales UI And History
 
-- [ ] Build sale workspace with customer selection and searchable product rows
-- [ ] Show availability, quantity, price and order total before confirmation
-- [ ] Prevent duplicate submit while preserving idempotency key on retry
-- [ ] Build sales list with date/customer/invoice filters and pagination
-- [ ] Build invoice detail with lot allocations, cost and gross profit
-- [ ] Apply Sales own-sales visibility policy
+- [x] Build sale workspace with customer selection and searchable product rows
+- [x] Show availability, quantity, price and order total before confirmation
+- [x] Prevent duplicate submit while preserving idempotency key on retry
+- [x] Build sales list with date/customer/invoice filters and pagination
+- [x] Build invoice detail with lot allocations, cost and gross profit
+- [x] Apply Sales own-sales visibility policy
 
 **Acceptance**
 
@@ -353,12 +353,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.5: Whole-Invoice Cancellation
 
-- [ ] Permit cancellation only for completed, non-cancelled invoices
-- [ ] Lock sale and allocated lots
-- [ ] Restore quantities to the exact original lots
-- [ ] Create `SALE_CANCELLATION_IN` movements and cancellation audit
-- [ ] Keep original sale/allocation values immutable
-- [ ] Require cancellation reason and Admin/Sales permission
+- [x] Permit cancellation only for completed, non-cancelled invoices
+- [x] Lock sale and allocated lots
+- [x] Restore quantities to the exact original lots
+- [x] Create `SALE_CANCELLATION_IN` movements and cancellation audit
+- [x] Keep original sale/allocation values immutable
+- [x] Require cancellation reason and Admin/Sales permission
 
 **Acceptance**
 
@@ -368,11 +368,11 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### Task 3.6: Dashboard And Costing
 
-- [ ] Add cards for product count, stock quantity, today/month sales, customers and low-stock count
-- [ ] Add daily/monthly sales, top products and monthly gross-profit queries
-- [ ] Add inventory value from available quantity multiplied by lot unit cost
-- [ ] Add sold cost from allocation snapshots
-- [ ] Apply role-specific visibility
+- [x] Add cards for product count, stock quantity, today/month sales, customers and low-stock count
+- [x] Add daily/monthly sales, top products and monthly gross-profit queries
+- [x] Add inventory value from available quantity multiplied by lot unit cost
+- [x] Add sold cost from allocation snapshots
+- [x] Apply role-specific visibility
 
 **Acceptance**
 
@@ -382,12 +382,12 @@ Movement records are immutable. Corrections create new records with a reference 
 
 ### MVP Release Gate
 
-- [ ] Run full lint, typecheck, unit, integration and Playwright suites in Docker
-- [ ] Run FIFO and concurrent-sale tests repeatedly without oversell
-- [ ] Verify RBAC allow/deny matrix through API tests
-- [ ] Verify migration from the previous release fixture
-- [ ] Run backup of the MVP database before production migration
-- [ ] Complete smoke test through the proxy
+- [x] Run full lint, typecheck, unit, integration and Playwright suites in Docker
+- [x] Run FIFO and concurrent-sale tests repeatedly without oversell
+- [x] Verify RBAC allow/deny matrix through API tests
+- [x] Verify migration from the previous release fixture
+- [x] Run backup of the MVP database before production migration
+- [x] Complete smoke test through the proxy
 
 MVP is releasable only when all Phase 1-3 acceptance criteria and this gate pass.
 
@@ -395,11 +395,11 @@ MVP is releasable only when all Phase 1-3 acceptance criteria and this gate pass
 
 ### Task 4.1: Report Query Layer
 
-- [ ] Implement date-range sales reports grouped daily, monthly and yearly
-- [ ] Implement current stock, low-stock, expired and expiring reports
-- [ ] Implement top-customer and new-customer reports
-- [ ] Implement daily, monthly and yearly gross-profit reports
-- [ ] Apply role-scoped filters before aggregation
+- [x] Implement date-range sales reports grouped daily, monthly and yearly
+- [x] Implement current stock, low-stock, expired and expiring reports
+- [x] Implement top-customer and new-customer reports
+- [x] Implement daily, monthly and yearly gross-profit reports
+- [x] Apply role-scoped filters before aggregation
 
 **Acceptance**
 
@@ -409,12 +409,12 @@ MVP is releasable only when all Phase 1-3 acceptance criteria and this gate pass
 
 ### Task 4.2: Background Export
 
-- [ ] Implement BullMQ export jobs through Redis
-- [ ] Persist ExportJob status, requester, filters, file checksum and expiry
-- [ ] Generate Excel and PDF from the same report query result
-- [ ] Use Thai-capable fonts and stable table layout
-- [ ] Restrict download to authorized requester/role
-- [ ] Remove expired artifacts through scheduled cleanup
+- [x] Implement BullMQ export jobs through Redis
+- [x] Persist ExportJob status, requester, filters, file checksum and expiry
+- [x] Generate Excel and PDF from the same report query result
+- [x] Use Thai-capable fonts and stable table layout
+- [x] Restrict download to authorized requester/role
+- [x] Remove expired artifacts through scheduled cleanup
 
 **Acceptance**
 

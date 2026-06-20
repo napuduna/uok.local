@@ -10,7 +10,10 @@ import { Reflector } from "@nestjs/core";
 import { hasPermission, type PermissionValue } from "@warehouse/contracts";
 
 import type { AuthenticatedRequest } from "./authenticated-request";
-import { REQUIRED_PERMISSIONS_KEY } from "./require-permission.decorator";
+import {
+  REQUIRED_ANY_PERMISSIONS_KEY,
+  REQUIRED_PERMISSIONS_KEY
+} from "./require-permission.decorator";
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -22,8 +25,16 @@ export class PermissionGuard implements CanActivate {
         REQUIRED_PERMISSIONS_KEY,
         [context.getHandler(), context.getClass()]
       ) ?? [];
+    const requiredAnyPermissions =
+      this.reflector.getAllAndOverride<PermissionValue[]>(
+        REQUIRED_ANY_PERMISSIONS_KEY,
+        [context.getHandler(), context.getClass()]
+      ) ?? [];
 
-    if (requiredPermissions.length === 0) {
+    if (
+      requiredPermissions.length === 0 &&
+      requiredAnyPermissions.length === 0
+    ) {
       return true;
     }
 
@@ -36,9 +47,14 @@ export class PermissionGuard implements CanActivate {
       });
     }
 
-    const allowed = requiredPermissions.every((permission) =>
-      hasPermission(request.auth!.role, permission)
-    );
+    const allowed =
+      requiredPermissions.every((permission) =>
+        hasPermission(request.auth!.role, permission)
+      ) &&
+      (requiredAnyPermissions.length === 0 ||
+        requiredAnyPermissions.some((permission) =>
+          hasPermission(request.auth!.role, permission)
+        ));
 
     if (!allowed) {
       throw new ForbiddenException({
