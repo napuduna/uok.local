@@ -1,22 +1,13 @@
 import { createHash, randomUUID } from "node:crypto";
 import { createWriteStream } from "node:fs";
-import {
-  mkdir,
-  readFile,
-  rename,
-  rm,
-  stat
-} from "node:fs/promises";
+import { mkdir, readFile, rename, rm, stat } from "node:fs/promises";
 import { join } from "node:path";
 
 import { Injectable } from "@nestjs/common";
 import ExcelJS from "exceljs";
 import PDFDocument from "pdfkit";
 
-import type {
-  ExportFormat,
-  ExportReportType
-} from "@warehouse/contracts";
+import type { ExportFormat, ExportReportType } from "@warehouse/contracts";
 
 import {
   buildExportLayout,
@@ -42,8 +33,7 @@ export interface GeneratedArtifact {
 }
 
 const CONTENT_TYPES: Record<ExportFormat, string> = {
-  XLSX:
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  XLSX: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   PDF: "application/pdf"
 };
 
@@ -59,9 +49,7 @@ const REPORT_FILE_NAMES: Record<ExportReportType, string> = {
 
 @Injectable()
 export class ExportArtifactGenerator {
-  async generate(
-    input: GenerateArtifactInput
-  ): Promise<GeneratedArtifact> {
+  async generate(input: GenerateArtifactInput): Promise<GeneratedArtifact> {
     await mkdir(input.outputDirectory, { recursive: true });
     const extension = input.format.toLowerCase();
     const fileName = `${REPORT_FILE_NAMES[input.reportType]}-${
@@ -96,10 +84,7 @@ export class ExportArtifactGenerator {
     }
   }
 
-  private async writeXlsx(
-    path: string,
-    layout: ExportLayout
-  ): Promise<void> {
+  private async writeXlsx(path: string, layout: ExportLayout): Promise<void> {
     const workbook = new ExcelJS.Workbook();
     workbook.creator = "U.O.K. Warehouse System";
     const worksheet = workbook.addWorksheet("รายงาน", {
@@ -227,8 +212,7 @@ export class ExportArtifactGenerator {
     document.fontSize(8);
     for (let index = 0; index < layout.headers.length; index += 1) {
       const width =
-        (availableWidth * (layout.columnWidths[index] ?? 1)) /
-        totalWeight;
+        (availableWidth * (layout.columnWidths[index] ?? 1)) / totalWeight;
       document.rect(x, y, width, rowHeight).strokeColor("#cccccc").stroke();
       document.text(String(row[index] ?? ""), x + 3, y + 6, {
         width: width - 6,
@@ -241,12 +225,7 @@ export class ExportArtifactGenerator {
     }
     if (bold) {
       document
-        .rect(
-          document.page.margins.left,
-          y,
-          availableWidth,
-          rowHeight
-        )
+        .rect(document.page.margins.left, y, availableWidth, rowHeight)
         .fillOpacity(0.06)
         .fill("#1f4e78")
         .fillOpacity(1);

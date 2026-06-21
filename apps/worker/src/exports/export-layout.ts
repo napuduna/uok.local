@@ -31,12 +31,14 @@ export function buildExportLayout(
           stringValue(item.totalSales)
         ]),
         totalRows: totals
-          ? [[
-              "รวม",
-              numberValue(totals.invoiceCount),
-              numberValue(totals.quantitySold),
-              stringValue(totals.totalSales)
-            ]]
+          ? [
+              [
+                "รวม",
+                numberValue(totals.invoiceCount),
+                numberValue(totals.quantitySold),
+                stringValue(totals.totalSales)
+              ]
+            ]
           : []
       };
     case "GROSS_PROFIT":
@@ -56,28 +58,20 @@ export function buildExportLayout(
           stringValue(item.grossProfit)
         ]),
         totalRows: totals
-          ? [[
-              "รวม",
-              stringValue(totals.totalSales),
-              stringValue(totals.totalCost),
-              stringValue(totals.grossProfit)
-            ]]
+          ? [
+              [
+                "รวม",
+                stringValue(totals.totalSales),
+                stringValue(totals.totalCost),
+                stringValue(totals.grossProfit)
+              ]
+            ]
           : []
       };
     case "INVENTORY_CURRENT":
-      return inventoryLayout(
-        "รายงานสต๊อกปัจจุบัน",
-        items,
-        totals,
-        false
-      );
+      return inventoryLayout("รายงานสต๊อกปัจจุบัน", items, totals, false);
     case "INVENTORY_LOW_STOCK":
-      return inventoryLayout(
-        "รายงานสินค้าใกล้หมด",
-        items,
-        totals,
-        true
-      );
+      return inventoryLayout("รายงานสินค้าใกล้หมด", items, totals, true);
     case "INVENTORY_EXPIRY":
       return {
         title: "รายงานวันหมดอายุ",
@@ -107,16 +101,18 @@ export function buildExportLayout(
           ];
         }),
         totalRows: totals
-          ? [[
-              "รวม",
-              "",
-              "",
-              "",
-              numberValue(totals.quantity),
-              "",
-              stringValue(totals.inventoryValue),
-              ""
-            ]]
+          ? [
+              [
+                "รวม",
+                "",
+                "",
+                "",
+                numberValue(totals.quantity),
+                "",
+                stringValue(totals.inventoryValue),
+                ""
+              ]
+            ]
           : []
       };
     case "TOP_CUSTOMERS":
@@ -198,14 +194,16 @@ function inventoryLayout(
       ];
     }),
     totalRows: totals
-      ? [[
-          "รวม",
-          "",
-          numberValue(totals.quantity),
-          "",
-          ...(includeShortage ? [""] : []),
-          stringValue(totals.inventoryValue)
-        ]]
+      ? [
+          [
+            "รวม",
+            "",
+            numberValue(totals.quantity),
+            "",
+            ...(includeShortage ? [""] : []),
+            stringValue(totals.inventoryValue)
+          ]
+        ]
       : []
   };
 }

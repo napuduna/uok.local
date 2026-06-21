@@ -10,11 +10,7 @@ import { ExportsService } from "./exports.service";
 @Module({
   imports: [AuthModule, ReportsModule],
   controllers: [ExportsController],
-  providers: [
-    ExportQueueService,
-    ExportReportSnapshotService,
-    ExportsService
-  ],
+  providers: [ExportQueueService, ExportReportSnapshotService, ExportsService],
   exports: [ExportsService]
 })
 export class ExportsModule {}

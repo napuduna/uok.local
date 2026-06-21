@@ -3,12 +3,7 @@ import {
   type OnApplicationShutdown,
   type OnModuleInit
 } from "@nestjs/common";
-import {
-  Queue,
-  Worker,
-  type ConnectionOptions,
-  type Job
-} from "bullmq";
+import { Queue, Worker, type ConnectionOptions, type Job } from "bullmq";
 
 import { ExportProcessorService } from "./export-processor.service";
 import { ExportRuntimeConfigService } from "./export-runtime-config.service";
@@ -22,9 +17,7 @@ interface GenerateExportJobData {
 }
 
 @Injectable()
-export class ExportQueueWorker
-  implements OnModuleInit, OnApplicationShutdown
-{
+export class ExportQueueWorker implements OnModuleInit, OnApplicationShutdown {
   private queue: Queue | undefined;
   private worker: Worker | undefined;
 
@@ -34,10 +27,7 @@ export class ExportQueueWorker
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const producerConnection = redisConnectionOptions(
-      this.runtime.redisUrl,
-      1
-    );
+    const producerConnection = redisConnectionOptions(this.runtime.redisUrl, 1);
     const workerConnection = redisConnectionOptions(
       this.runtime.redisUrl,
       null
@@ -57,14 +47,10 @@ export class ExportQueueWorker
         }
       }
     );
-    this.worker = new Worker(
-      EXPORT_QUEUE_NAME,
-      (job) => this.processJob(job),
-      {
-        connection: workerConnection,
-        concurrency: 2
-      }
-    );
+    this.worker = new Worker(EXPORT_QUEUE_NAME, (job) => this.processJob(job), {
+      connection: workerConnection,
+      concurrency: 2
+    });
   }
 
   async onApplicationShutdown(): Promise<void> {
@@ -99,11 +85,7 @@ function redisConnectionOptions(
     port: Number(url.port || "6379"),
     db: Number(url.pathname.replace(/^\//, "") || "0"),
     maxRetriesPerRequest,
-    ...(url.username
-      ? { username: decodeURIComponent(url.username) }
-      : {}),
-    ...(url.password
-      ? { password: decodeURIComponent(url.password) }
-      : {})
+    ...(url.username ? { username: decodeURIComponent(url.username) } : {}),
+    ...(url.password ? { password: decodeURIComponent(url.password) } : {})
   };
 }

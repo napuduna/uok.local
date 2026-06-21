@@ -17,10 +17,7 @@ import {
 } from "@nestjs/common";
 import { z } from "zod";
 
-import {
-  createExportRequestSchema,
-  Permission
-} from "@warehouse/contracts";
+import { createExportRequestSchema, Permission } from "@warehouse/contracts";
 
 import type { AuthenticatedRequest } from "../auth/authenticated-request";
 import { PermissionGuard } from "../auth/permission.guard";
@@ -51,10 +48,7 @@ export class ExportsController {
     const parsedBody = createExportRequestSchema.safeParse(body);
     const parsedKey = idempotencyKeySchema.safeParse(idempotencyKey);
     if (!parsedBody.success) {
-      throw validationError(
-        "ข้อมูลคำขอ Export ไม่ถูกต้อง",
-        parsedBody.error
-      );
+      throw validationError("ข้อมูลคำขอ Export ไม่ถูกต้อง", parsedBody.error);
     }
     if (!parsedKey.success) {
       throw validationError("ต้องระบุ Idempotency-Key", parsedKey.error);
@@ -68,10 +62,7 @@ export class ExportsController {
   }
 
   @Get(":id")
-  get(
-    @Param("id") id: string,
-    @Req() request: AuthenticatedRequest
-  ) {
+  get(@Param("id") id: string, @Req() request: AuthenticatedRequest) {
     return this.exportsService.get(parseId(id), {
       actorId: request.auth!.id,
       role: request.auth!.role

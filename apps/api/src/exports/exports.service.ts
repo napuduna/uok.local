@@ -47,9 +47,7 @@ export class ExportsService {
   ) {}
 
   requestHash(input: CreateExportRequest): string {
-    return createHash("sha256")
-      .update(JSON.stringify(input))
-      .digest("hex");
+    return createHash("sha256").update(JSON.stringify(input)).digest("hex");
   }
 
   async create(
@@ -83,8 +81,7 @@ export class ExportsService {
     const expiresAt = new Date(now.getTime() + ARTIFACT_TTL_MS);
     let created: ExportJobRecord;
     try {
-      created = await this.database.client.$transaction(
-      async (transaction) => {
+      created = await this.database.client.$transaction(async (transaction) => {
         const exportJob = await transaction.exportJob.create({
           data: {
             reportType: input.reportType,
@@ -115,8 +112,7 @@ export class ExportsService {
           }
         });
         return exportJob;
-      }
-    );
+      });
     } catch (error) {
       if (hasErrorCode(error, "P2002")) {
         const winner = await this.database.client.exportJob.findUnique({
@@ -157,9 +153,7 @@ export class ExportsService {
               action: "EXPORT_FAILED",
               resourceType: "EXPORT_JOB",
               resourceId: created.id,
-              ...(context.requestId
-                ? { requestId: context.requestId }
-                : {}),
+              ...(context.requestId ? { requestId: context.requestId } : {}),
               metadata: {
                 errorCode: "EXPORT_QUEUE_UNAVAILABLE"
               }
@@ -239,10 +233,7 @@ export class ExportsService {
       contentType: exportJob.contentType
     };
   }
-  private assertCanExport(
-    reportType: ExportReportType,
-    role: RoleValue
-  ): void {
+  private assertCanExport(reportType: ExportReportType, role: RoleValue): void {
     if (role === Role.ADMIN || role === Role.MANAGER) {
       return;
     }

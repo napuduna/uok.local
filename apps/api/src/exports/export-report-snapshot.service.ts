@@ -106,10 +106,7 @@ export class ExportReportSnapshotService {
     }
   }
 
-  private async collectPages<
-    TItem,
-    TReport extends PaginatedReport<TItem>
-  >(
+  private async collectPages<TItem, TReport extends PaginatedReport<TItem>>(
     loadPage: (page: number) => Promise<TReport>
   ): Promise<TReport> {
     const first = await loadPage(1);

@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  createExportRequestSchema,
-  exportJobResponseSchema
-} from "./export";
+import { createExportRequestSchema, exportJobResponseSchema } from "./export";
 
 describe("export contracts", () => {
   it("parses a sales export with deterministic report filters", () => {
@@ -69,8 +66,7 @@ describe("export contracts", () => {
       fileName: "sales-00000000-0000-4000-8000-000000000001.xlsx",
       contentType:
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      fileChecksum:
-        "a".repeat(64),
+      fileChecksum: "a".repeat(64),
       fileSizeBytes: 2048,
       expiresAt: "2026-06-21T00:00:00.000Z",
       completedAt: "2026-06-20T00:00:00.000Z",

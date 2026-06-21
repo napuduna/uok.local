@@ -134,9 +134,7 @@ describe("ExportProcessorService", () => {
 
   it("persists a safe failure and throws a retryable generic error", async () => {
     const { service, generator, transaction, record } = createHarness();
-    generator.generate.mockRejectedValue(
-      new Error("secret filesystem detail")
-    );
+    generator.generate.mockRejectedValue(new Error("secret filesystem detail"));
 
     await expect(service.process(record.id)).rejects.toThrow(
       "Export generation failed"
@@ -149,8 +147,7 @@ describe("ExportProcessorService", () => {
       })
     });
     expect(
-      transaction.exportJob.update.mock.calls.at(-1)?.[0].data
-        .safeErrorMessage
+      transaction.exportJob.update.mock.calls.at(-1)?.[0].data.safeErrorMessage
     ).not.toContain("secret");
   });
 

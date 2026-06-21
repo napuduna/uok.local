@@ -29,17 +29,16 @@ describe.skipIf(process.env.RUN_INTEGRATION_TESTS !== "true")(
       await application.init();
       database = application.get(DatabaseService).client;
 
-      const [admin, salesRole, managerRole, warehouseRole] =
-        await Promise.all([
-          database.user.findUniqueOrThrow({
-            where: { email: "admin@uok.local" }
-          }),
-          database.role.findUniqueOrThrow({ where: { name: "SALES" } }),
-          database.role.findUniqueOrThrow({ where: { name: "MANAGER" } }),
-          database.role.findUniqueOrThrow({
-            where: { name: "WAREHOUSE" }
-          })
-        ]);
+      const [admin, salesRole, managerRole, warehouseRole] = await Promise.all([
+        database.user.findUniqueOrThrow({
+          where: { email: "admin@uok.local" }
+        }),
+        database.role.findUniqueOrThrow({ where: { name: "SALES" } }),
+        database.role.findUniqueOrThrow({ where: { name: "MANAGER" } }),
+        database.role.findUniqueOrThrow({
+          where: { name: "WAREHOUSE" }
+        })
+      ]);
       const suffix = randomUUID();
       const [sales, otherSales, manager, warehouse] = await Promise.all([
         database.user.create({
@@ -123,9 +122,9 @@ describe.skipIf(process.env.RUN_INTEGRATION_TESTS !== "true")(
       const stored = await database.exportJob.findUniqueOrThrow({
         where: { id: created.body.id }
       });
-      expect(
-        (stored.resultSnapshot as { totals: unknown }).totals
-      ).toEqual(report.body.totals);
+      expect((stored.resultSnapshot as { totals: unknown }).totals).toEqual(
+        report.body.totals
+      );
       expect(stored.filters).toEqual(filters);
       expect(
         await database.auditLog.findFirst({

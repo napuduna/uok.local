@@ -45,12 +45,8 @@ describe("ExportArtifactGenerator", () => {
     const layout = buildExportLayout("SALES", salesSnapshot);
 
     expect(layout.title).toBe("รายงานยอดขาย");
-    expect(layout.rows).toEqual([
-      ["2026-02", 2, 8, "300.00"]
-    ]);
-    expect(layout.totalRows).toEqual([
-      ["รวม", 2, 8, "300.00"]
-    ]);
+    expect(layout.rows).toEqual([["2026-02", 2, 8, "300.00"]]);
+    expect(layout.totalRows).toEqual([["รวม", 2, 8, "300.00"]]);
   });
 
   it("writes an XLSX whose totals equal the report snapshot", async () => {

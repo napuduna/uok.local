@@ -55,7 +55,9 @@ function exportRecord(overrides: Record<string, unknown> = {}) {
   };
 }
 
-function createHarness(existing: ReturnType<typeof exportRecord> | null = null) {
+function createHarness(
+  existing: ReturnType<typeof exportRecord> | null = null
+) {
   const created = exportRecord();
   const transaction = {
     exportJob: {
@@ -208,10 +210,14 @@ describe("ExportsService", () => {
     ).rejects.toBeInstanceOf(ForbiddenException);
 
     await expect(
-      service.getDownload(completed.id, {
-        actorId: "00000000-0000-4000-8000-000000000099",
-        role: "MANAGER"
-      })
+      service.getDownload(
+        completed.id,
+        {
+          actorId: "00000000-0000-4000-8000-000000000099",
+          role: "MANAGER"
+        },
+        new Date("2026-06-20T12:00:00.000Z")
+      )
     ).resolves.toMatchObject({
       artifactPath: completed.artifactPath,
       fileName: completed.fileName,
