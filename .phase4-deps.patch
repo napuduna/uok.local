@@ -1,0 +1,10 @@
+diff --git a/pnpm-workspace.yaml b/pnpm-workspace.yaml
+--- a/pnpm-workspace.yaml
++++ b/pnpm-workspace.yaml
+@@ -11,6 +11,6 @@ allowBuilds:
+   bcrypt: true
+   esbuild: true
+-  msgpackr-extract: set this to true or false
++  msgpackr-extract: false
+   prisma: true
+   sharp: true

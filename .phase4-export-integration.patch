@@ -1,0 +1,122 @@
+diff --git a/packages/contracts/src/index.ts b/packages/contracts/src/index.ts
+--- a/packages/contracts/src/index.ts
++++ b/packages/contracts/src/index.ts
+@@ -155,3 +155,4 @@ export type {
+   Role as RoleValue
+ } from "./rbac.js";
+ export * from "./report.js";
++export * from "./export.js";
+diff --git a/apps/api/src/app.module.ts b/apps/api/src/app.module.ts
+--- a/apps/api/src/app.module.ts
++++ b/apps/api/src/app.module.ts
+@@ -9,6 +9,7 @@ import { DashboardModule } from "./dashboard/dashboard.module";
+ import { DatabaseModule } from "./database/database.module";
++import { ExportsModule } from "./exports/exports.module";
+ import { HealthController } from "./health/health.controller";
+ import { RedisModule } from "./redis/redis.module";
+ import { ReportsModule } from "./reports/reports.module";
+@@ -30,6 +31,7 @@ import { UsersModule } from "./users/users.module";
+     AdjustmentsModule,
+     DashboardModule,
+     CustomersModule,
++    ExportsModule,
+     ReportsModule,
+     SalesModule
+   ],
+diff --git a/apps/worker/src/app.module.ts b/apps/worker/src/app.module.ts
+--- a/apps/worker/src/app.module.ts
++++ b/apps/worker/src/app.module.ts
+@@ -6,10 +6,13 @@ import {
+ } from "@nestjs/common";
+ 
+ import { RequestIdMiddleware } from "./common/request-id.middleware";
++import { DatabaseModule } from "./database/database.module";
++import { ExportsModule } from "./exports/exports.module";
+ import { HealthController } from "./health/health.controller";
+ 
+ @Module({
++  imports: [DatabaseModule, ExportsModule],
+   controllers: [HealthController],
+   providers: []
+ })
+diff --git a/apps/api/src/exports/export-snapshot.service.ts b/apps/api/src/exports/export-snapshot.service.ts
+--- a/apps/api/src/exports/export-snapshot.service.ts
++++ b/apps/api/src/exports/export-snapshot.service.ts
+@@ -109,7 +109,7 @@ export class ExportSnapshotService {
+     context: ExportContext
+   ): Promise<ExportSnapshot> {
+     const result = await collectPages((page) =>
+-      this.reports.currentInventory({ page, pageSize: 100 }, context)
++      this.reports.currentInventory({ page, pageSize: 100 })
+     );
+@@ -148,7 +148,7 @@ export class ExportSnapshotService {
+     context: ExportContext
+   ): Promise<ExportSnapshot> {
+     const result = await collectPages((page) =>
+-      this.reports.lowStock({ page, pageSize: 100 }, context)
++      this.reports.lowStock({ page, pageSize: 100 })
+     );
+@@ -181,8 +181,7 @@ export class ExportSnapshotService {
+   ): Promise<ExportSnapshot> {
+     const result = await collectPages((page) =>
+       this.reports.expiry(
+-        { ...request.filters, page, pageSize: 100 },
+-        context
++        { ...request.filters, page, pageSize: 100 }
+       )
+     );
+diff --git a/apps/api/src/exports/exports.service.ts b/apps/api/src/exports/exports.service.ts
+--- a/apps/api/src/exports/exports.service.ts
++++ b/apps/api/src/exports/exports.service.ts
+@@ -89,12 +89,12 @@ export class ExportsService {
+             action: "EXPORT_REQUESTED",
+             resourceType: "EXPORT_JOB",
+             resourceId: job.id,
+-            changes: {
++            after: {
+               reportType: input.reportType,
+               format: input.format,
+               filters: input.filters
+             }
+           }
+diff --git a/apps/worker/src/exports/export-worker.service.ts b/apps/worker/src/exports/export-worker.service.ts
+--- a/apps/worker/src/exports/export-worker.service.ts
++++ b/apps/worker/src/exports/export-worker.service.ts
+@@ -17,7 +17,6 @@ import {
+   type ExportQueuePayload
+ } from "@warehouse/contracts";
+-import { Prisma } from "@warehouse/database";
+ 
+ import { DatabaseService } from "../database/database.service";
+@@ -135,7 +134,7 @@ export class ExportWorkerService implements OnModuleInit, OnModuleDestroy {
+             action: "EXPORT_COMPLETED",
+             resourceType: "EXPORT_JOB",
+             resourceId: job.id,
+-            changes: {
++            after: {
+               format: job.format,
+               fileName,
+@@ -178,7 +177,7 @@ export class ExportWorkerService implements OnModuleInit, OnModuleDestroy {
+             action: "EXPORT_FAILED",
+             resourceType: "EXPORT_JOB",
+             resourceId: job.id,
+-            changes: {
++            after: {
+               errorCode: "EXPORT_GENERATION_FAILED"
+             }
+@@ -219,4 +218,2 @@ function positiveInteger(value: string | undefined, fallback: number): number {
+   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+ }
+-
+-void Prisma;
+diff --git a/apps/worker/src/exports/export-cleanup.service.ts b/apps/worker/src/exports/export-cleanup.service.ts
+--- a/apps/worker/src/exports/export-cleanup.service.ts
++++ b/apps/worker/src/exports/export-cleanup.service.ts
+@@ -65,7 +65,7 @@ export class ExportCleanupService implements OnModuleInit, OnModuleDestroy {
+               action: "EXPORT_EXPIRED",
+               resourceType: "EXPORT_JOB",
+               resourceId: job.id,
+-              changes: {
++              after: {
+                 expiredAt: new Date().toISOString()
+               }
