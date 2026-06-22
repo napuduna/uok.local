@@ -21,7 +21,7 @@
     "react-dom": "latest"
   },
   "devDependencies": {
-    "@playwright/test": "latest",
+    "@playwright/test": "1.61.0",
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",
     "@testing-library/user-event": "latest",

@@ -19,6 +19,7 @@
     "@warehouse/contracts": "workspace:*",
     "@warehouse/database": "workspace:*",
     "bcrypt": "latest",
+    "bullmq": "^5.79.0",
     "ioredis": "latest",
     "reflect-metadata": "latest",
     "rxjs": "latest",

@@ -16,12 +16,17 @@
     "@nestjs/platform-express": "latest",
     "@warehouse/config": "workspace:*",
     "@warehouse/contracts": "workspace:*",
+    "@warehouse/database": "workspace:*",
+    "bullmq": "^5.79.0",
+    "exceljs": "^4.4.0",
+    "pdfkit": "^0.19.1",
     "reflect-metadata": "latest",
     "rxjs": "latest"
   },
   "devDependencies": {
     "@nestjs/cli": "latest",
     "@nestjs/testing": "latest",
-    "@types/express": "latest"
+    "@types/express": "latest",
+    "@types/pdfkit": "^0.17.6"
   }
 }

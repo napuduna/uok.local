@@ -11,5 +11,6 @@ allowBuilds:
   "@prisma/engines": true
   bcrypt: true
   esbuild: true
+  msgpackr-extract: false
   prisma: true
   sharp: true

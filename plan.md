@@ -409,12 +409,12 @@ MVP is releasable only when all Phase 1-3 acceptance criteria and this gate pass
 
 ### Task 4.2: Background Export
 
-- [ ] Implement BullMQ export jobs through Redis
-- [ ] Persist ExportJob status, requester, filters, file checksum and expiry
-- [ ] Generate Excel and PDF from the same report query result
-- [ ] Use Thai-capable fonts and stable table layout
-- [ ] Restrict download to authorized requester/role
-- [ ] Remove expired artifacts through scheduled cleanup
+- [x] Implement BullMQ export jobs through Redis
+- [x] Persist ExportJob status, requester, filters, file checksum and expiry
+- [x] Generate Excel and PDF from the same report query result
+- [x] Use Thai-capable fonts and stable table layout
+- [x] Restrict download to authorized requester/role
+- [x] Remove expired artifacts through scheduled cleanup
 
 **Acceptance**
 
