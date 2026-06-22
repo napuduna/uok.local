@@ -5,6 +5,7 @@ import {
   BarChart3,
   Bell,
   Boxes,
+  CalendarClock,
   ChevronDown,
   CircleUserRound,
   ClipboardList,
@@ -21,13 +22,15 @@ import {
   Users,
   X
 } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
+import { type ReactNode, useState } from "react";
 
 import {
   hasPermission,
   Permission,
   Role,
   type AuthenticatedUserResponse,
+  type DashboardAlertsResponse,
   type PermissionValue
 } from "@warehouse/contracts";
 import { MetricCard, StatusDot } from "@warehouse/ui";
@@ -36,31 +39,35 @@ const navigation = [
   {
     label: "ภาพรวม",
     icon: LayoutDashboard,
-    active: true,
+    href: "/",
     group: "main",
     permissions: [Permission.DASHBOARD_VIEW]
   },
   {
     label: "สินค้า",
     icon: Boxes,
+    href: "/products",
     group: "main",
     permissions: [Permission.PRODUCT_READ]
   },
   {
     label: "รับสินค้าเข้า",
     icon: PackagePlus,
+    href: "/stock-ins",
     group: "main",
     permissions: [Permission.STOCK_MANAGE]
   },
   {
     label: "ปรับสต๊อก",
     icon: SlidersHorizontal,
+    href: "/adjustments",
     group: "main",
     permissions: [Permission.STOCK_MANAGE]
   },
   {
     label: "การขาย",
     icon: ShoppingCart,
+    href: "/sales",
     group: "main",
     permissions: [
       Permission.SALE_READ_ALL,
@@ -71,12 +78,14 @@ const navigation = [
   {
     label: "ลูกค้า",
     icon: Users,
+    href: "/customers",
     group: "main",
     permissions: [Permission.CUSTOMER_READ]
   },
   {
     label: "รายงาน",
     icon: BarChart3,
+    href: "/reports",
     group: "main",
     permissions: [
       Permission.REPORT_SALES_ALL,
@@ -87,6 +96,7 @@ const navigation = [
   {
     label: "ตั้งค่า",
     icon: Settings,
+    href: "/settings",
     group: "system",
     permissions: [Permission.USER_MANAGE]
   }
@@ -114,12 +124,6 @@ function canAccessAny(
 }
 
 const chartBars = [42, 56, 48, 72, 66, 81, 74, 88, 79, 94, 86, 96];
-
-const lowStockItems = [
-  { name: "ครีมสมุนไพร", code: "P002", stock: 12, level: "danger" as const },
-  { name: "สบู่สมุนไพร", code: "P001", stock: 25, level: "warning" as const },
-  { name: "เซรั่มมะขาม", code: "P018", stock: 38, level: "warning" as const }
-];
 
 const topProducts = [
   {
@@ -163,13 +167,26 @@ const topProducts = [
 interface DashboardShellProps {
   currentUser?: AuthenticatedUserResponse;
   todayLabel?: string;
+  pageTitle?: string;
+  activePath?: string;
+  dashboardAlerts?: DashboardAlertsResponse | null;
+  children?: ReactNode;
 }
 
 export function DashboardShell({
   currentUser = defaultUser,
-  todayLabel = "วันอาทิตย์ที่ 14 มิถุนายน 2569"
+  todayLabel = "วันอาทิตย์ที่ 14 มิถุนายน 2569",
+  pageTitle = "ภาพรวมคลังสินค้า",
+  activePath = "/",
+  dashboardAlerts = null,
+  children
 }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const alertCount = dashboardAlerts
+    ? dashboardAlerts.lowStockCount +
+      dashboardAlerts.expiredLotCount +
+      dashboardAlerts.expiringSoonLotCount
+    : 0;
   const visibleNavigation = navigation.filter((item) =>
     canAccessAny(currentUser.role, item.permissions)
   );
@@ -207,18 +224,19 @@ export function DashboardShell({
             .map((item) => {
               const Icon = item.icon;
               return (
-                <button
+                <Link
                   className={
-                    "active" in item && item.active
+                    item.href === activePath
                       ? "nav-item nav-item--active"
                       : "nav-item"
                   }
-                  type="button"
+                  href={item.href}
                   key={item.label}
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <Icon size={18} strokeWidth={2} />
                   <span>{item.label}</span>
-                </button>
+                </Link>
               );
             })}
           <p className="sidebar__section-label sidebar__section-label--settings">
@@ -229,10 +247,19 @@ export function DashboardShell({
             .map((item) => {
               const Icon = item.icon;
               return (
-                <button className="nav-item" type="button" key={item.label}>
+                <Link
+                  className={
+                    item.href === activePath
+                      ? "nav-item nav-item--active"
+                      : "nav-item"
+                  }
+                  href={item.href}
+                  key={item.label}
+                  onClick={() => setSidebarOpen(false)}
+                >
                   <Icon size={18} strokeWidth={2} />
                   <span>{item.label}</span>
-                </button>
+                </Link>
               );
             })}
         </nav>
@@ -268,7 +295,7 @@ export function DashboardShell({
             <Menu size={20} />
           </button>
           <div className="topbar__title">
-            <h1>ภาพรวมคลังสินค้า</h1>
+            <h1>{pageTitle}</h1>
             <p>{todayLabel}</p>
           </div>
 
@@ -284,7 +311,9 @@ export function DashboardShell({
               aria-label="การแจ้งเตือน"
             >
               <Bell size={19} />
-              <span className="notification-button__dot" />
+              {alertCount > 0 ? (
+                <span className="notification-button__dot" />
+              ) : null}
             </button>
             <button className="profile-button" type="button">
               <span className="profile-button__avatar">
@@ -309,163 +338,210 @@ export function DashboardShell({
         </header>
 
         <main className="dashboard">
-          <section className="dashboard__heading">
-            <div>
-              <h2>สถานะธุรกิจวันนี้</h2>
-              <p>ข้อมูลล่าสุดจากคลังหลักและรายการขายทั้งหมด</p>
-            </div>
-            <button className="secondary-button" type="button">
-              <ClipboardList size={17} />
-              ดูรายงาน
-            </button>
-          </section>
-
-          <section className="metrics-grid" aria-label="สรุปข้อมูล">
-            <MetricCard
-              icon={<Boxes size={20} />}
-              label="สินค้าทั้งหมด"
-              value="250 รายการ"
-              detail="+12 รายการเดือนนี้"
-            />
-            <MetricCard
-              icon={<Archive size={20} />}
-              label="สินค้าคงเหลือ"
-              value="15,250 ชิ้น"
-              detail="มูลค่า ฿486,700"
-            />
-            <MetricCard
-              icon={<TrendingUp size={20} />}
-              label="ยอดขายวันนี้"
-              value="฿12,500"
-              detail="+8.4% จากเมื่อวาน"
-              tone="positive"
-            />
-            {hasPermission(currentUser.role, Permission.COSTING_READ) ? (
-              <MetricCard
-                icon={<BarChart3 size={20} />}
-                label="กำไรขั้นต้นเดือนนี้"
-                value="฿98,400"
-                detail="อัตรากำไร 27.6%"
-                tone="positive"
-              />
-            ) : null}
-          </section>
-
-          <section className="dashboard-grid">
-            <article className="panel sales-panel">
-              <div className="panel__header">
+          {children ? (
+            children
+          ) : (
+            <>
+              <section className="dashboard__heading">
                 <div>
-                  <h3>ยอดขายรายวัน</h3>
-                  <p>ยอดขายรวม 12 วันล่าสุด</p>
+                  <h2>สถานะธุรกิจวันนี้</h2>
+                  <p>ข้อมูลล่าสุดจากคลังหลักและรายการขายทั้งหมด</p>
                 </div>
-                <button className="period-button" type="button">
-                  12 วันล่าสุด
-                  <ChevronDown size={15} />
+                <button className="secondary-button" type="button">
+                  <ClipboardList size={17} />
+                  ดูรายงาน
                 </button>
-              </div>
-              <div className="chart-summary">
-                <strong>฿128,650</strong>
-                <span>
-                  <TrendingUp size={14} />
-                  12.8%
-                </span>
-              </div>
-              <div className="bar-chart" aria-label="กราฟยอดขายรายวัน">
-                {chartBars.map((height, index) => (
-                  <div className="bar-chart__item" key={`${height}-${index}`}>
-                    <div
-                      className={
-                        index === chartBars.length - 1
-                          ? "bar-chart__bar bar-chart__bar--active"
-                          : "bar-chart__bar"
-                      }
-                      style={{ height: `${height}%` }}
-                    />
-                    <span>{index % 2 === 0 ? index + 1 : ""}</span>
-                  </div>
-                ))}
-              </div>
-            </article>
+              </section>
 
-            <article className="panel alert-panel">
-              <div className="panel__header">
-                <div>
-                  <h3>สินค้าใกล้หมด</h3>
-                  <p>ต่ำกว่าจุดสั่งซื้อที่กำหนด</p>
+              <section className="metrics-grid" aria-label="สรุปข้อมูล">
+                <MetricCard
+                  icon={<Boxes size={20} />}
+                  label="สินค้าทั้งหมด"
+                  value="250 รายการ"
+                  detail="+12 รายการเดือนนี้"
+                />
+                <MetricCard
+                  icon={<Archive size={20} />}
+                  label="สินค้าคงเหลือ"
+                  value="15,250 ชิ้น"
+                  detail="มูลค่า ฿486,700"
+                />
+                <MetricCard
+                  icon={<TrendingUp size={20} />}
+                  label="ยอดขายวันนี้"
+                  value="฿12,500"
+                  detail="+8.4% จากเมื่อวาน"
+                  tone="positive"
+                />
+                {hasPermission(currentUser.role, Permission.COSTING_READ) ? (
+                  <MetricCard
+                    icon={<BarChart3 size={20} />}
+                    label="กำไรขั้นต้นเดือนนี้"
+                    value="฿98,400"
+                    detail="อัตรากำไร 27.6%"
+                    tone="positive"
+                  />
+                ) : null}
+              </section>
+
+              <section className="dashboard-grid">
+                <article className="panel sales-panel">
+                  <div className="panel__header">
+                    <div>
+                      <h3>ยอดขายรายวัน</h3>
+                      <p>ยอดขายรวม 12 วันล่าสุด</p>
+                    </div>
+                    <button className="period-button" type="button">
+                      12 วันล่าสุด
+                      <ChevronDown size={15} />
+                    </button>
+                  </div>
+                  <div className="chart-summary">
+                    <strong>฿128,650</strong>
+                    <span>
+                      <TrendingUp size={14} />
+                      12.8%
+                    </span>
+                  </div>
+                  <div className="bar-chart" aria-label="กราฟยอดขายรายวัน">
+                    {chartBars.map((height, index) => (
+                      <div
+                        className="bar-chart__item"
+                        key={`${height}-${index}`}
+                      >
+                        <div
+                          className={
+                            index === chartBars.length - 1
+                              ? "bar-chart__bar bar-chart__bar--active"
+                              : "bar-chart__bar"
+                          }
+                          style={{ height: `${height}%` }}
+                        />
+                        <span>{index % 2 === 0 ? index + 1 : ""}</span>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+
+                <article className="panel alert-panel">
+                  <div className="panel__header">
+                    <div>
+                      <h3>การแจ้งเตือนคลัง</h3>
+                      <p>สต๊อกต่ำและ LOT ใกล้หมดอายุ</p>
+                    </div>
+                    <span className="alert-count">{alertCount}</span>
+                  </div>
+                  <div className="alert-list">
+                    {dashboardAlerts?.lowStockItems.map((item) => (
+                      <div
+                        className="alert-row"
+                        key={`low-stock-${item.product.id}`}
+                      >
+                        <div
+                          className={
+                            item.totalAvailable === 0
+                              ? "product-avatar product-avatar--danger"
+                              : "product-avatar product-avatar--warning"
+                          }
+                        >
+                          <TrendingDown size={17} />
+                        </div>
+                        <div className="alert-row__copy">
+                          <strong>{item.product.name}</strong>
+                          <span>{item.product.code} · สต๊อกต่ำ</span>
+                        </div>
+                        <div className="alert-row__stock">
+                          <strong>{item.totalAvailable}</strong>
+                          <span>เกณฑ์ {item.lowStockThreshold}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {dashboardAlerts?.expiryItems.map((item) => (
+                      <div className="alert-row" key={`expiry-${item.lot.id}`}>
+                        <div
+                          className={
+                            item.status === "EXPIRED"
+                              ? "product-avatar product-avatar--danger"
+                              : "product-avatar product-avatar--warning"
+                          }
+                        >
+                          <CalendarClock size={17} />
+                        </div>
+                        <div className="alert-row__copy">
+                          <strong>{item.product.name}</strong>
+                          <span>{item.lot.lotNumber}</span>
+                        </div>
+                        <div className="alert-row__stock">
+                          <strong>{item.availableQuantity}</strong>
+                          <span>
+                            {item.status === "EXPIRED"
+                              ? "หมดอายุแล้ว"
+                              : `อีก ${item.daysUntilExpiry} วัน`}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    {alertCount === 0 ? (
+                      <p className="alert-empty">ไม่มีรายการที่ต้องดำเนินการ</p>
+                    ) : null}
+                  </div>
+                  <Link className="panel-link" href="/products">
+                    ดูสินค้าทั้งหมด
+                  </Link>
+                </article>
+              </section>
+
+              <section className="panel products-panel">
+                <div className="panel__header panel__header--table">
+                  <div>
+                    <h3>สินค้าขายดี</h3>
+                    <p>เรียงตามจำนวนขายในเดือนปัจจุบัน</p>
+                  </div>
+                  <button
+                    className="secondary-button secondary-button--compact"
+                    type="button"
+                  >
+                    ดูรายการสินค้า
+                  </button>
                 </div>
-                <span className="alert-count">8</span>
-              </div>
-              <div className="alert-list">
-                {lowStockItems.map((item) => (
-                  <div className="alert-row" key={item.code}>
-                    <div
-                      className={`product-avatar product-avatar--${item.level}`}
-                    >
-                      <TrendingDown size={17} />
-                    </div>
-                    <div className="alert-row__copy">
-                      <strong>{item.name}</strong>
-                      <span>{item.code}</span>
-                    </div>
-                    <div className="alert-row__stock">
-                      <strong>{item.stock}</strong>
-                      <span>ชิ้น</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button className="panel-link" type="button">
-                ดูสินค้าทั้งหมด
-              </button>
-            </article>
-          </section>
-
-          <section className="panel products-panel">
-            <div className="panel__header panel__header--table">
-              <div>
-                <h3>สินค้าขายดี</h3>
-                <p>เรียงตามจำนวนขายในเดือนปัจจุบัน</p>
-              </div>
-              <button
-                className="secondary-button secondary-button--compact"
-                type="button"
-              >
-                ดูรายการสินค้า
-              </button>
-            </div>
-            <div className="table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>รหัส</th>
-                    <th>สินค้า</th>
-                    <th className="table-number">ขายแล้ว</th>
-                    <th className="table-number">คงเหลือ</th>
-                    <th className="table-number">ยอดขาย</th>
-                    <th>สถานะ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topProducts.map((product) => (
-                    <tr key={product.code}>
-                      <td className="product-code">{product.code}</td>
-                      <td>
-                        <strong>{product.name}</strong>
-                      </td>
-                      <td className="table-number">{product.sold}</td>
-                      <td className="table-number">{product.stock}</td>
-                      <td className="table-number table-money">
-                        {product.revenue}
-                      </td>
-                      <td>
-                        <StatusDot label={product.status} tone={product.tone} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+                <div className="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>รหัส</th>
+                        <th>สินค้า</th>
+                        <th className="table-number">ขายแล้ว</th>
+                        <th className="table-number">คงเหลือ</th>
+                        <th className="table-number">ยอดขาย</th>
+                        <th>สถานะ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topProducts.map((product) => (
+                        <tr key={product.code}>
+                          <td className="product-code">{product.code}</td>
+                          <td>
+                            <strong>{product.name}</strong>
+                          </td>
+                          <td className="table-number">{product.sold}</td>
+                          <td className="table-number">{product.stock}</td>
+                          <td className="table-number table-money">
+                            {product.revenue}
+                          </td>
+                          <td>
+                            <StatusDot
+                              label={product.status}
+                              tone={product.tone}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </>
+          )}
         </main>
       </div>
     </div>

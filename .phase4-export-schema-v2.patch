@@ -1,0 +1,72 @@
+diff --git a/packages/database/prisma/schema.prisma b/packages/database/prisma/schema.prisma
+--- a/packages/database/prisma/schema.prisma
++++ b/packages/database/prisma/schema.prisma
+@@ -39,4 +39,27 @@
+   CANCELLED
+ }
+ 
++enum ExportReportType {
++  SALES
++  GROSS_PROFIT
++  INVENTORY_CURRENT
++  INVENTORY_LOW_STOCK
++  INVENTORY_EXPIRY
++  CUSTOMERS_TOP
++  CUSTOMERS_NEW
++}
++
++enum ExportFormat {
++  XLSX
++  PDF
++}
++
++enum ExportJobStatus {
++  PENDING
++  PROCESSING
++  COMPLETED
++  FAILED
++  EXPIRED
++}
++
+ model Warehouse {
+@@ -84,3 +107,4 @@
+   createdSales       Sale[]                @relation("SaleCreator")
+   cancelledSales     Sale[]                @relation("SaleCanceller")
++  exportJobs         ExportJob[]           @relation("ExportRequester")
+ }
+@@ -341,3 +365,35 @@
+   @@unique([saleItemId, lotId])
+   @@index([lotId, saleItemId])
+ }
++
++model ExportJob {
++  id              String           @id @default(uuid()) @db.Uuid
++  reportType      ExportReportType
++  format          ExportFormat
++  status          ExportJobStatus  @default(PENDING)
++  requesterId     String           @db.Uuid
++  requester       User             @relation("ExportRequester", fields: [requesterId], references: [id], onDelete: Restrict)
++  filters         Json
++  scope           Json
++  snapshot        Json
++  idempotencyKey  String           @unique
++  requestHash     String
++  queueJobId      String           @unique
++  artifactPath    String?
++  fileName        String?
++  mimeType        String?
++  checksum        String?
++  sizeBytes       Int?
++  expiresAt       DateTime?
++  startedAt       DateTime?
++  completedAt     DateTime?
++  failedAt        DateTime?
++  errorCode       String?
++  errorMessage    String?
++  createdAt       DateTime         @default(now())
++  updatedAt       DateTime         @updatedAt
++
++  @@index([requesterId, createdAt, id])
++  @@index([status, createdAt, id])
++  @@index([expiresAt, id])
++}

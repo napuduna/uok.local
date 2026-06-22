@@ -5,14 +5,37 @@ import {
 } from "@nestjs/common";
 
 import { AuthModule } from "./auth/auth.module";
+import { AdjustmentsModule } from "./adjustments/adjustments.module";
+import { CustomersModule } from "./customers/customers.module";
+import { DashboardModule } from "./dashboard/dashboard.module";
 import { DatabaseModule } from "./database/database.module";
+import { ExportsModule } from "./exports/exports.module";
 import { HealthController } from "./health/health.controller";
 import { RedisModule } from "./redis/redis.module";
+import { ReportsModule } from "./reports/reports.module";
+import { SalesModule } from "./sales/sales.module";
+import { StockInsModule } from "./stock-ins/stock-ins.module";
 import { RequestIdMiddleware } from "./common/request-id.middleware";
+import { InventoryModule } from "./inventory/inventory.module";
+import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
 
 @Module({
-  imports: [DatabaseModule, RedisModule, AuthModule, UsersModule],
+  imports: [
+    DatabaseModule,
+    RedisModule,
+    AuthModule,
+    UsersModule,
+    ProductsModule,
+    InventoryModule,
+    StockInsModule,
+    AdjustmentsModule,
+    DashboardModule,
+    CustomersModule,
+    ReportsModule,
+    ExportsModule,
+    SalesModule
+  ],
   controllers: [HealthController]
 })
 export class AppModule implements NestModule {

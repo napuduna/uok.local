@@ -52,6 +52,18 @@ async function main() {
     }
   });
 
+  await prisma.category.upsert({
+    where: { code: "GENERAL" },
+    update: { isActive: true, archivedAt: null, name: "ทั่วไป" },
+    create: { code: "GENERAL", name: "ทั่วไป" }
+  });
+
+  await prisma.unit.upsert({
+    where: { code: "PCS" },
+    update: { isActive: true, archivedAt: null, name: "ชิ้น" },
+    create: { code: "PCS", name: "ชิ้น" }
+  });
+
   const adminRole = roles.find((role) => role.name === UserRole.ADMIN);
 
   if (!adminRole) {

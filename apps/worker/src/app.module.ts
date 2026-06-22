@@ -5,10 +5,12 @@ import {
 } from "@nestjs/common";
 
 import { RequestIdMiddleware } from "./common/request-id.middleware";
+import { ExportsModule } from "./exports/exports.module";
 import { HealthController } from "./health/health.controller";
 import { HealthService } from "./health/health.service";
 
 @Module({
+  imports: [ExportsModule],
   controllers: [HealthController],
   providers: [HealthService]
 })
